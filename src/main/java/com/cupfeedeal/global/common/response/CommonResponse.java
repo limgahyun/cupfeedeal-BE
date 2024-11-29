@@ -3,6 +3,7 @@ package com.cupfeedeal.global.common.response;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ public class CommonResponse<T> {
     // 반환값 있는 경우
     public CommonResponse(T result, String message) {
         this.timestamp = LocalDateTime.now();
-        this.code = SuccessCode.SUCCESS.getCode();
+        this.code = HttpStatus.OK.value();
         this.message = message;
         this.result = result;
     }
@@ -26,7 +27,7 @@ public class CommonResponse<T> {
     // 반환값 없는 경우
     public CommonResponse(String message) {
         this.timestamp = LocalDateTime.now();
-        this.code = SuccessCode.SUCCESS.getCode();
+        this.code = HttpStatus.OK.value();
         this.message = message;
     }
 }
