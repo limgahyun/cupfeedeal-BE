@@ -50,10 +50,10 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build docker image
-        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/vote .
+        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/cupfeedeal .
 
       - name: Publish image to docker hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/vote:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/cupfeedeal:latest
 
   deploy:
     needs: build
@@ -87,7 +87,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/vote:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cupfeedeal:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
       - name: Check deploy server URL
