@@ -1,0 +1,66 @@
+spring:
+  profiles:
+    active: local
+    group:
+      local: local, common, secret
+      blue: blue, common, secret
+      green: green, common, secret
+
+server:
+  env: blue
+
+---
+
+# local
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  port: 8080
+  serverAddress: localhost
+
+serverName: local_server
+
+---
+
+# blue server
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: 8080
+  serverAddress: 3.37.104.79
+
+serverName: blue_server
+
+---
+
+# green server
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: 8081
+  serverAddress: 3.37.104.79
+
+serverName: green_server
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+    import: optional:file:.env[.properties]
+logging:
+  level:
+    org.hibernate.SQL: debug
+springdoc:
+  swagger-ui:
+    path: /swagger
