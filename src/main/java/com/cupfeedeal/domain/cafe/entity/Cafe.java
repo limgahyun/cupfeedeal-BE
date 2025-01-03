@@ -22,13 +22,13 @@ public class Cafe {
     private String address;
 
     @Column(nullable = false)
-    private String address_map;
+    private String addressMap;
 
     @Column(nullable = false)
-    private String operation_time;
+    private String operationTime;
 
     @Column(nullable = false)
-    private String subscription_price;
+    private String subscriptionPrice;
 
     @Column(nullable = false)
     private String description;
@@ -37,17 +37,17 @@ public class Cafe {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private String SnsAddress;
+    private String snsAddress;
 
     @Builder
-    public Cafe(String name, String address, String address_map, String operation_time, String subscription_price, String description, String phoneNumber, String SnsAddress) {
+    public Cafe(String name, String address, String addressMap, String operationTime, String subscriptionPrice, String description, String phoneNumber, String snsAddress) {
         this.name = name;
         this.address = address;
-        this.address_map = address_map;
-        this.operation_time = operation_time;
-        this.subscription_price = subscription_price;
+        this.addressMap = addressMap;
+        this.operationTime = operationTime;
+        this.subscriptionPrice = subscriptionPrice;
         this.description = description;
         this.phoneNumber = phoneNumber;
-        this.SnsAddress = SnsAddress;
+        this.snsAddress = snsAddress;
     }
 }
