@@ -4,15 +4,15 @@ import com.cupfeedeal.domain.cafe.entity.Cafe;
 
 import java.util.List;
 
-public record CafeRecommandationListResponseDto (
+public record CafeRecommendationListResponseDto (
         Long cafe_id,
         String name,
         List<String> menu,
         String address,
         String subscription_price
 ){
-    public static CafeRecommandationListResponseDto from(Cafe cafe, List<String> menu) {
-        return new CafeRecommandationListResponseDto(
+    public static CafeRecommendationListResponseDto from(Cafe cafe, List<String> menu) {
+        return new CafeRecommendationListResponseDto(
                 cafe.getId(),
                 cafe.getName(),
                 menu,
