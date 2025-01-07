@@ -38,6 +38,10 @@ dependencies {
 	// env
 	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
+	// 카카오 로그인
+	//Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 }
 
 tasks.named('compileJava') {
