@@ -39,8 +39,11 @@ public class Cafe {
     @Column(nullable = false)
     private String snsAddress;
 
+    @Column
+    private String menuBoard;
+
     @Builder
-    public Cafe(String name, String address, String addressMap, String operationTime, String subscriptionPrice, String description, String phoneNumber, String snsAddress) {
+    public Cafe(String name, String address, String addressMap, String operationTime, String subscriptionPrice, String description, String phoneNumber, String snsAddress, String menuBoard) {
         this.name = name;
         this.address = address;
         this.addressMap = addressMap;
@@ -49,5 +52,6 @@ public class Cafe {
         this.description = description;
         this.phoneNumber = phoneNumber;
         this.snsAddress = snsAddress;
+        this.menuBoard = menuBoard;
     }
 }
