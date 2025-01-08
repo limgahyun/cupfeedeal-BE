@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.cafe.controller;
 
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
+import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
@@ -9,10 +10,7 @@ import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,6 +41,13 @@ public class CafeController {
     public CommonResponse<List<CafeNewOpenListResponseDto>> getOpenCafes() {
         List<CafeNewOpenListResponseDto> openCafeList = cafeService.getNewOpenCafes();
         return new CommonResponse<>(openCafeList, "새로 오픈 카페 조회에 성공하였습니다.");
+    }
+
+    @Operation(summary = "카페 상세 정보 조회")
+    @GetMapping("/{cafeId}")
+    public CommonResponse<CafeInfoResponseDto> getCafeInfo(@RequestParam Long cafeId) {
+        CafeInfoResponseDto cafeInfo = cafeService.getCafeInfo(cafeId);
+        return new CommonResponse<>(cafeInfo, "해당 카페의 상세 정보 조회에 성공하였습니다.");
     }
 
 
