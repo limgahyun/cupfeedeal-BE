@@ -8,7 +8,7 @@ import lombok.ToString;
 public enum SubscriptionMenu {
 
     AMERICANO("AMERICANO"),
-    SIGNITURE("SIGNITURE");
+    SIGNATURE("SIGNATURE");
 
     private final String description;
 

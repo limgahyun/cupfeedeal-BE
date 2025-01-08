@@ -50,7 +50,7 @@ public class Cafe extends BaseEntity {
     private Boolean isNewOpen = false;
 
     @Column
-    private String signitureMenu;
+    private String signatureMenu;
 
     @PrePersist
     public void prePersist() {
@@ -62,7 +62,7 @@ public class Cafe extends BaseEntity {
     }
 
     @Builder
-    public Cafe(String name, String address, String addressMap, String operationTime, String subscriptionPrice, String description, String phoneNumber, String snsAddress, String menuBoard, Boolean isRecommended, Boolean isNewOpen, String signitureMenu) {
+    public Cafe(String name, String address, String addressMap, String operationTime, Integer subscriptionPrice, String description, String phoneNumber, String snsAddress, String menuBoard, Boolean isRecommended, Boolean isNewOpen, String signatureMenu) {
         this.name = name;
         this.address = address;
         this.addressMap = addressMap;
@@ -74,6 +74,6 @@ public class Cafe extends BaseEntity {
         this.menuBoard = menuBoard;
         this.isRecommended = isRecommended;
         this.isNewOpen = isNewOpen;
-        this.signitureMenu = signitureMenu;
+        this.signatureMenu = signatureMenu;
     }
 }

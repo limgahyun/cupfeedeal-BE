@@ -7,13 +7,13 @@ public record CafeRecommendationListResponseDto (
         String name,
         String menu,
         String address,
-        String subscription_price
+        Integer subscription_price
 ){
     public static CafeRecommendationListResponseDto from(Cafe cafe) {
         return new CafeRecommendationListResponseDto(
                 cafe.getId(),
                 cafe.getName(),
-                cafe.getSignitureMenu(),
+                cafe.getSignatureMenu(),
                 cafe.getAddress(),
                 cafe.getSubscriptionPrice()
         );
