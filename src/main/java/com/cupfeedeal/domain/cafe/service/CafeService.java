@@ -40,6 +40,9 @@ public class CafeService {
         });
     }
 
+    /*
+    추천 cafe 조회
+     */
     public List<CafeRecommendationListResponseDto> getRecommendationCafes() {
         final List<Cafe> cafeList = cafeRepository.findTop3ByIsRecommendedIsTrueOrderByCreatedAtDesc();
         return cafeList.stream()
@@ -47,6 +50,9 @@ public class CafeService {
                 .toList();
     }
 
+    /*
+    새로 오픈한 cafe 조회
+     */
     public List<CafeNewOpenListResponseDto> getNewOpenCafes() {
         final List<Cafe> cafeList = cafeRepository.findTop3ByIsNewOpenIsTrueOrderByCreatedAtDesc();
         return cafeList.stream()
