@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface CafeRepository extends JpaRepository<Cafe, Long> {
-    List<Cafe> findTop3ByIsRecommendedIsTrueOrderByCreatedAtDesc();
-    List<Cafe> findTop3ByIsNewOpenIsTrueOrderByCreatedAtDesc();
+    List<Cafe> findTop7ByIsRecommendedIsTrueOrderByCreatedAtDesc();
+    List<Cafe> findTop7ByIsNewOpenIsTrueOrderByCreatedAtDesc();
 
 }

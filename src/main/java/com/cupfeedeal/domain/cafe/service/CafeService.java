@@ -52,7 +52,7 @@ public class CafeService {
     추천 cafe 조회
      */
     public List<CafeRecommendationListResponseDto> getRecommendationCafes() {
-        final List<Cafe> cafeList = cafeRepository.findTop3ByIsRecommendedIsTrueOrderByCreatedAtDesc();
+        final List<Cafe> cafeList = cafeRepository.findTop7ByIsRecommendedIsTrueOrderByCreatedAtDesc();
         return cafeList.stream()
                 .map(CafeRecommendationListResponseDto::from)
                 .toList();
@@ -62,7 +62,7 @@ public class CafeService {
     새로 오픈한 cafe 조회
      */
     public List<CafeNewOpenListResponseDto> getNewOpenCafes() {
-        final List<Cafe> cafeList = cafeRepository.findTop3ByIsNewOpenIsTrueOrderByCreatedAtDesc();
+        final List<Cafe> cafeList = cafeRepository.findTop7ByIsNewOpenIsTrueOrderByCreatedAtDesc();
         return cafeList.stream()
                 .map(CafeNewOpenListResponseDto::from)
                 .toList();
