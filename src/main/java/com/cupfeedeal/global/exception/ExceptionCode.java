@@ -19,9 +19,10 @@ public enum ExceptionCode {
     FORBIDDEN_EXCEPTION(HttpStatus.FORBIDDEN, 2005, "인가되지 않는 요청입니다."),
     ALREADY_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, 2006, "이미 존재하는 리소스입니다."),
     INVALID_SORT_EXCEPTION(HttpStatus.BAD_REQUEST, 2007, "올바르지 않은 정렬 값입니다."),
-    BAD_REQUEST_ERROR(HttpStatus.BAD_REQUEST, 2008, "잘못된 요청입니다.");
+    BAD_REQUEST_ERROR(HttpStatus.BAD_REQUEST, 2008, "잘못된 요청입니다."),
 
-    // 3000:
+    // 3000: Auth Error
+    PARSING_ERROR(HttpStatus.BAD_REQUEST, 3000, "파싱 오류가 발생했습니다.");
 
     // 4000:
 

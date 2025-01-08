@@ -29,8 +29,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/hc", "/env","/**","/login/**", "/auth/join/**").permitAll()
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/reissue").permitAll()
+                        .requestMatchers("/api/v1/auth/signin/**", "/login").permitAll()
                         .anyRequest().authenticated());
         http
                 .logout((logout) -> logout
