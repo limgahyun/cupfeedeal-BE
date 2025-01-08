@@ -1,6 +1,5 @@
 package com.cupfeedeal.domain.cafeSubscriptionType.entity;
 
-import com.cupfeedeal.domain.cafeSubscriptionType.enumerate.SubscriptionMenu;
 import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,9 +23,6 @@ public class CafeSubscriptionType extends BaseEntity {
     private String cafe_name;
 
     @Column(nullable = false)
-    private SubscriptionMenu menu;
-
-    @Column(nullable = false)
     private Integer period;
 
     @Column(nullable = false)
@@ -40,10 +36,9 @@ public class CafeSubscriptionType extends BaseEntity {
 
 
     @Builder
-    public CafeSubscriptionType(String name, String cafe_name, SubscriptionMenu menu, Integer period, Integer price, Float discount_percentage, Integer original_drink_price) {
+    public CafeSubscriptionType(String name, String cafe_name, Integer period, Integer price, Float discount_percentage, Integer original_drink_price) {
         this.name = name;
         this.cafe_name = cafe_name;
-        this.menu = menu;
         this.period = period;
         this.price = price;
         this.discount_percentage = discount_percentage;
