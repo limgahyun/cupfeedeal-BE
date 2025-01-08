@@ -5,40 +5,33 @@ import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionT
 
 import java.util.List;
 
-public record CafeInfoResponseDto (
+public record CafeListResponseDto (
         Long id,
         String name,
         String address_map,
         String address,
-        List<CafeSubscriptionTypeResponseDto> subscription_types,
-        List<String> images,
-        String operation_time,
-        String phone_num,
-        String sns_address,
-        String description,
-        String menu_board,
+        String signiture_menu,
+        Integer price,
+        String images,
         Boolean is_like,
         Boolean is_subscription
 ) {
-    public static CafeInfoResponseDto from(Cafe cafe,
+    public static CafeListResponseDto from(Cafe cafe,
                                            List<CafeSubscriptionTypeResponseDto> subscription_types,
-                                           List<String> images,
+                                           String image,
                                            Boolean is_like,
                                            Boolean is_subscription) {
-        return new CafeInfoResponseDto(
+        return new CafeListResponseDto(
                 cafe.getId(),
                 cafe.getName(),
                 cafe.getAddressMap(),
                 cafe.getAddress(),
-                subscription_types,
-                images,
-                cafe.getOperationTime(),
-                cafe.getPhoneNumber(),
-                cafe.getSnsAddress(),
-                cafe.getDescription(),
-                cafe.getMenuBoard(),
+                cafe.getSignitureMenu(),
+                cafe.getSubscriptionPrice(),
+                image,
                 is_like,
                 is_subscription
         );
     }
 }
+

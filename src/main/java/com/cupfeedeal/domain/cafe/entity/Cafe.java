@@ -29,7 +29,7 @@ public class Cafe extends BaseEntity {
     private String operationTime;
 
     @Column(nullable = false)
-    private String subscriptionPrice;
+    private Integer subscriptionPrice;
 
     @Column(nullable = false)
     private String description;
