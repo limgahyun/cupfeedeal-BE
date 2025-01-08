@@ -11,7 +11,7 @@ public record CafeCreateRequestDto (
         String address,
         String address_map,
         String operation_time,
-        String subscription_price,
+        Integer subscription_price,
         String description,
         String phoneNumber,
         String SnsAddress,
