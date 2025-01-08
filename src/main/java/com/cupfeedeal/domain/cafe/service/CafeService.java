@@ -1,6 +1,8 @@
 package com.cupfeedeal.domain.cafe.service;
 
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
+import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
+import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafeImage.dto.request.CafeImageCreateRequestDto;
@@ -38,7 +40,17 @@ public class CafeService {
         });
     }
 
-    public List<Cafe> getRecommendationCafes() {
-        final List<Cafe> cafeList = cafeRepository.findRe();
+    public List<CafeRecommendationListResponseDto> getRecommendationCafes() {
+        final List<Cafe> cafeList = cafeRepository.findTop3ByIsRecommendedIsTrueOrderByCreatedAtDesc();
+        return cafeList.stream()
+                .map(CafeRecommendationListResponseDto::from)
+                .toList();
+    }
+
+    public List<CafeNewOpenListResponseDto> getNewOpenCafes() {
+        final List<Cafe> cafeList = cafeRepository.findTop3ByIsNewOpenIsTrueOrderByCreatedAtDesc();
+        return cafeList.stream()
+                .map(CafeNewOpenListResponseDto::from)
+                .toList();
     }
 }

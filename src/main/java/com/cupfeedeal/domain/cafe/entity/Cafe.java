@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.cafe.entity;
 
+import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Cafe {
+public class Cafe extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cafe_id")
@@ -48,6 +49,9 @@ public class Cafe {
     @Column
     private Boolean isNewOpen = false;
 
+    @Column
+    private String signitureMenu;
+
     @PrePersist
     public void prePersist() {
         if (isRecommended == null) {
@@ -58,7 +62,7 @@ public class Cafe {
     }
 
     @Builder
-    public Cafe(String name, String address, String addressMap, String operationTime, String subscriptionPrice, String description, String phoneNumber, String snsAddress, String menuBoard, Boolean isRecommended, Boolean isNewOpen) {
+    public Cafe(String name, String address, String addressMap, String operationTime, String subscriptionPrice, String description, String phoneNumber, String snsAddress, String menuBoard, Boolean isRecommended, Boolean isNewOpen, String signitureMenu) {
         this.name = name;
         this.address = address;
         this.addressMap = addressMap;
@@ -70,5 +74,6 @@ public class Cafe {
         this.menuBoard = menuBoard;
         this.isRecommended = isRecommended;
         this.isNewOpen = isNewOpen;
+        this.signitureMenu = signitureMenu;
     }
 }
