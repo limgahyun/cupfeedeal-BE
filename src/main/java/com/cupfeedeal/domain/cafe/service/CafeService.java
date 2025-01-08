@@ -7,6 +7,9 @@ import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafeImage.dto.request.CafeImageCreateRequestDto;
+import com.cupfeedeal.domain.cafeImage.dto.response.CafeImageResponseDto;
+import com.cupfeedeal.domain.cafeImage.entity.CafeImage;
+import com.cupfeedeal.domain.cafeImage.repository.CafeImageRepository;
 import com.cupfeedeal.domain.cafeImage.service.CafeImageService;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
@@ -23,6 +26,7 @@ public class CafeService {
 
     private final CafeRepository cafeRepository;
     private final CafeImageService cafeImageService;
+    private final CafeImageRepository cafeImageRepository;
 
     public Cafe findCafeById(Long id) {
         return cafeRepository.findById(id)
@@ -70,11 +74,18 @@ public class CafeService {
 
     /*
     cafe 상세 정보 조회
-
-    public List<CafeInfoResponseDto> getCafeInfo(Long id) {
+     */
+    public CafeInfoResponseDto getCafeInfo(Long id) {
         Cafe cafe = findCafeById(id);
+        List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
+        List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
+                .map(CafeImageResponseDto::from)
+                .toList();
 
+        Boolean is_like = false;
+        Boolean is_subscribed = false;
+
+        return CafeInfoResponseDto.from(cafe, cafeImageResponseDtoList, is_like, is_subscribed);
     }
 
-     */
 }
