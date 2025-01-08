@@ -37,4 +37,8 @@ public class CafeService {
             cafeImageService.createCafeImage(CafeImageCreateRequestDto.from(imageUrl, cafe));
         });
     }
+
+    public List<Cafe> getRecommendationCafes() {
+        final List<Cafe> cafeList = cafeRepository.findRe();
+    }
 }
