@@ -1,12 +1,15 @@
 package com.cupfeedeal.domain.cafe.service;
 
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
+import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafeImage.dto.request.CafeImageCreateRequestDto;
 import com.cupfeedeal.domain.cafeImage.service.CafeImageService;
+import com.cupfeedeal.global.exception.ApplicationException;
+import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,11 @@ public class CafeService {
 
     private final CafeRepository cafeRepository;
     private final CafeImageService cafeImageService;
+
+    public Cafe findCafeById(Long id) {
+        return cafeRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
+    }
 
     /*
     cafe 생성
@@ -59,4 +67,14 @@ public class CafeService {
                 .map(CafeNewOpenListResponseDto::from)
                 .toList();
     }
+
+    /*
+    cafe 상세 정보 조회
+
+    public List<CafeInfoResponseDto> getCafeInfo(Long id) {
+        Cafe cafe = findCafeById(id);
+
+    }
+
+     */
 }
