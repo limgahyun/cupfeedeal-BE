@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.cafe.dto.response;
 
 import com.cupfeedeal.domain.cafe.entity.Cafe;
+import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionTypeResponseDto;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ public record CafeInfoResponseDto (
         Long id,
         String address_map,
         String address,
-        List<CafeSubscriptionListResponseDto> subscription_types,
+        List<CafeSubscriptionTypeResponseDto> subscription_types,
         List<String> images,
         String operation_time,
         String phone_num,
@@ -19,7 +20,7 @@ public record CafeInfoResponseDto (
         Boolean is_subscription
 ) {
     public static CafeInfoResponseDto from(Cafe cafe,
-                                           List<CafeSubscriptionListResponseDto> subscription_types,
+                                           List<CafeSubscriptionTypeResponseDto> subscription_types,
                                            List<String> images,
                                            Boolean is_like,
                                            Boolean is_subscription) {
