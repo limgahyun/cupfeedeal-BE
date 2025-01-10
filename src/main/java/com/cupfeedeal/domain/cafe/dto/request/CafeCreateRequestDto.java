@@ -15,7 +15,6 @@ public record CafeCreateRequestDto (
         String description,
         String phoneNumber,
         String SnsAddress,
-        String menuBoard,
         List<String> images
 ){
     public Cafe toEntity(){
@@ -29,7 +28,6 @@ public record CafeCreateRequestDto (
                 .description(description)
                 .phoneNumber(phoneNumber)
                 .snsAddress(SnsAddress)
-                .menuBoard(menuBoard)
                 .build();
     }
 

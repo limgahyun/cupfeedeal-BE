@@ -16,7 +16,6 @@ public record CafeInfoResponseDto (
         String phone_num,
         String sns_address,
         String description,
-        String menu_board,
         Boolean is_like,
         Boolean is_subscription
 ) {
@@ -34,7 +33,6 @@ public record CafeInfoResponseDto (
                 cafe.getPhoneNumber(),
                 cafe.getSnsAddress(),
                 cafe.getDescription(),
-                cafe.getMenuBoard(),
                 is_like,
                 is_subscription
         );

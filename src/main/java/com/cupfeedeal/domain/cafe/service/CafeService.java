@@ -2,6 +2,7 @@ package com.cupfeedeal.domain.cafe.service;
 
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
+import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
@@ -82,10 +83,18 @@ public class CafeService {
                 .map(CafeImageResponseDto::from)
                 .toList();
 
+        // user access token 반영하여 코드 수정
         Boolean is_like = false;
         Boolean is_subscribed = false;
 
         return CafeInfoResponseDto.from(cafe, cafeImageResponseDtoList, is_like, is_subscribed);
     }
+
+    /*
+    cafe 검색 결과 리스트 조회
+    public CafeListResponseDto getCafeList() {
+
+    }
+     */
 
 }
