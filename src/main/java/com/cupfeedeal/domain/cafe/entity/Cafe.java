@@ -23,7 +23,10 @@ public class Cafe extends BaseEntity {
     private String address;
 
     @Column(nullable = false)
-    private String addressMap;
+    private String addressLat;
+
+    @Column(nullable = false)
+    private String addressLng;
 
     @Column(nullable = false)
     private String operationTime;
@@ -59,10 +62,11 @@ public class Cafe extends BaseEntity {
     }
 
     @Builder
-    public Cafe(String name, String address, String addressMap, String operationTime, Integer subscriptionPrice, String description, String phoneNumber, String snsAddress, Boolean isRecommended, Boolean isNewOpen, String signatureMenu) {
+    public Cafe(String name, String address, String addressLat, String addressLng, String operationTime, Integer subscriptionPrice, String description, String phoneNumber, String snsAddress, Boolean isRecommended, Boolean isNewOpen, String signatureMenu) {
         this.name = name;
         this.address = address;
-        this.addressMap = addressMap;
+        this.addressLat = addressLat;
+        this.addressLng = addressLng;
         this.operationTime = operationTime;
         this.subscriptionPrice = subscriptionPrice;
         this.description = description;

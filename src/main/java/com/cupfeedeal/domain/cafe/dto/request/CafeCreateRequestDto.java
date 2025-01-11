@@ -9,7 +9,8 @@ import java.util.List;
 public record CafeCreateRequestDto (
         String name,
         String address,
-        String address_map,
+        String address_latitude,
+        String address_longitude,
         String operation_time,
         Integer subscription_price,
         String description,
@@ -21,8 +22,8 @@ public record CafeCreateRequestDto (
         return Cafe.builder()
                 .name(name)
                 .address(address)
-                .addressMap(address_map)
-                .snsAddress(address_map)
+                .addressLat(address_latitude)
+                .addressLng(address_longitude)
                 .operationTime(operation_time)
                 .subscriptionPrice(subscription_price)
                 .description(description)

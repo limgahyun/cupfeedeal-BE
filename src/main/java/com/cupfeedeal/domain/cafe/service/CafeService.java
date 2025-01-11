@@ -92,9 +92,8 @@ public class CafeService {
 
     /*
     cafe 검색 결과 리스트 조회
-    public CafeListResponseDto getCafeList() {
+    public List<CafeListResponseDto> getCafeList() {
 
     }
      */
-
 }

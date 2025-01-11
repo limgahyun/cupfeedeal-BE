@@ -5,7 +5,8 @@ import com.cupfeedeal.domain.cafe.entity.Cafe;
 public record CafeListResponseDto (
         Long id,
         String name,
-        String address_map,
+        String address_lat,
+        String address_lng,
         String address,
         Integer price,
         String images,
@@ -19,7 +20,8 @@ public record CafeListResponseDto (
         return new CafeListResponseDto(
                 cafe.getId(),
                 cafe.getName(),
-                cafe.getAddressMap(),
+                cafe.getAddressLat(),
+                cafe.getAddressLng(),
                 cafe.getAddress(),
                 cafe.getSubscriptionPrice(),
                 image,
