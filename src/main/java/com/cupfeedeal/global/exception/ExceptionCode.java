@@ -22,7 +22,7 @@ public enum ExceptionCode {
     BAD_REQUEST_ERROR(HttpStatus.BAD_REQUEST, 2008, "잘못된 요청입니다."),
 
     // 3000: Auth Error
-    PARSING_ERROR(HttpStatus.BAD_REQUEST, 3000, "파싱 오류가 발생했습니다.");
+
 
     // 4000:
 
@@ -33,6 +33,7 @@ public enum ExceptionCode {
 
     //7000: [임의] Error
 
+    ;
 
     private final HttpStatus httpStatus;
     private final int code;
