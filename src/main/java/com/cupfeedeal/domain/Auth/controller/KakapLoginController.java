@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.Auth.controller;
 
+import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoUserInfoResponseDto;
 import com.cupfeedeal.domain.Auth.service.KakaoService;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import io.jsonwebtoken.io.IOException;
@@ -23,6 +24,11 @@ public class KakapLoginController {
     @GetMapping("/callback")
     public CommonResponse<?> callback(@RequestParam("code") String code) throws IOException {
         String accessToken = kakaoService.getAccessTokenFromKAkao(code);
+        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
+
+        // 서버 사용자 로그인(인증) 또는 회원가입 로직 추가
+
+
         return new CommonResponse<>("카카오 로그인 코드가 성공적으로 수신되었습니다. ");
     }
 }
