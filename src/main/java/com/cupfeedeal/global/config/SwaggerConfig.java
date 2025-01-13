@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Configuration;
                 description = "CEOS vote service API 명세서",
                 version = "v1"
         ),
-        servers = {@Server(url = "http://localhost:8080", description = "local server")}
+        servers = {@Server(url = "https://api.cupfeedeal.xyz", description = "ec2 server"),
+                @Server(url = "http://localhost:8080", description = "local server")}
 )
 
 public class SwaggerConfig {
