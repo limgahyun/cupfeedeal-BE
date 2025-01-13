@@ -99,7 +99,8 @@ public class CafeService {
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
         cafeList.forEach(cafe -> {
-            CafeImage image = cafeImageService.findMainCafeImage(cafe);
+            CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
+                            .orElse(null);
             cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, false));
         });
 

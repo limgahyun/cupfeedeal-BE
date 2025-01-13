@@ -23,7 +23,7 @@ public record CafeListResponseDto (
                 cafe.getAddressLng(),
                 cafe.getAddress(),
                 cafe.getSubscriptionPrice(),
-                image.getImageUrl(),
+                image == null ? null : image.getImageUrl(),
                 is_like
         );
     }
