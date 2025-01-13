@@ -7,7 +7,7 @@ public record CafeImageCreateRequestDto (
         String imageUrl,
         Cafe cafe
 ){
-    public static CafeImageCreateRequestDto from(String imageUrl, Cafe cafe){
+    public static CafeImageCreateRequestDto from(String imageUrl, Cafe cafe) {
         return new CafeImageCreateRequestDto(
                 imageUrl,
                 cafe
@@ -18,6 +18,7 @@ public record CafeImageCreateRequestDto (
         return CafeImage.builder()
                 .cafe(cafe)
                 .imageUrl(imageUrl)
+                .isMainImage(false)
                 .build();
     }
 }

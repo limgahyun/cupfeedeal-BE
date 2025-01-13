@@ -23,9 +23,13 @@ public class CafeImage {
     @Column
     private String imageUrl;
 
+    @Column
+    private Boolean isMainImage = false;
+
     @Builder
-    public CafeImage(Cafe cafe, String imageUrl) {
+    public CafeImage(Cafe cafe, String imageUrl, Boolean isMainImage) {
         this.cafe = cafe;
         this.imageUrl = imageUrl;
+        this.isMainImage = isMainImage;
     }
 }
