@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .logout((logout) -> logout
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true))
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);;
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         http
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -154,11 +155,13 @@ public class KakaoUserInfoResponseDto {
         @Getter
         @NoArgsConstructor
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public class Profile {
+        public static class Profile {
 
             //닉네임
             @JsonProperty("nickname")
-            public String nickName;
+            @Getter
+            @Setter
+            public String nickname;
 
             //프로필 미리보기 이미지 URL
             @JsonProperty("thumbnail_image_url")
@@ -176,7 +179,8 @@ public class KakaoUserInfoResponseDto {
             //닉네임이 기본 닉네임인지 여부
             //true : 기본 닉네임, false : 사용자 등록
             @JsonProperty("is_default_nickname")
-            public Boolean isDefaultNickName;
+            public Boolean isDefaultNickname;
+
 
         }
     }

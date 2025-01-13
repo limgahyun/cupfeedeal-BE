@@ -22,7 +22,7 @@ public enum ExceptionCode {
     BAD_REQUEST_ERROR(HttpStatus.BAD_REQUEST, 2008, "잘못된 요청입니다."),
 
     // 3000: Auth Error
-
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, 3000, "해당 유저를 찾을 수 없습니다.")
 
     // 4000:
 

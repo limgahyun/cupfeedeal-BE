@@ -2,15 +2,20 @@ package com.cupfeedeal.domain.Auth.service;
 
 import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoTokenResponseDto;
 import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoUserInfoResponseDto;
+import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.domain.User.repository.UserRepository;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -22,15 +27,17 @@ public class KakaoService {
     private String clientId;
     private final String KAUTH_TOKEN_URL_HOST;
     private final String KAUTH_USER_URL_HOST;
+    private UserRepository userRepository;
 
     @Autowired
-    public KakaoService(@Value("${kakao.client_id") String clientId){
+    public KakaoService(@Value("${kakao.client_id") String clientId, UserRepository userRepository){
         this.clientId = clientId;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
+        this.userRepository = userRepository;
     }
 
-    public String getAccessTokenFromKAkao(String code){
+    public String getAccessTokenFromKakao(String code){
         KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -70,7 +77,6 @@ public class KakaoService {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken) // access token 인가
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
                 .retrieve()
-                //TODO : Custom Exception
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
                         Mono.error(new RuntimeException(ExceptionCode.INVALID_VALUE_EXCEPTION.getMessage()))
                 )
@@ -81,10 +87,12 @@ public class KakaoService {
                 .block();
 
         log.info("[ Kakao Service ] Auth ID ---> {} ", userInfo.getId());
-        log.info("[ Kakao Service ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickName());
+        log.info("[ Kakao Service ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickname());
 
         return userInfo;
     }
+
+
 
 
 }
