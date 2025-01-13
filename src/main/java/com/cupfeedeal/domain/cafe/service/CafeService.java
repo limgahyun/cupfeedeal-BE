@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -92,8 +93,16 @@ public class CafeService {
 
     /*
     cafe 검색 결과 리스트 조회
-    public List<CafeListResponseDto> getCafeList() {
-
-    }
      */
+    public List<CafeListResponseDto> getCafeList(final String name) {
+        final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
+        List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
+
+        cafeList.forEach(cafe -> {
+            CafeImage image = cafeImageRepository.findByCafe(cafe);
+            cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, false));
+        });
+
+        return cafeListResponseDtoList;
+    }
 }

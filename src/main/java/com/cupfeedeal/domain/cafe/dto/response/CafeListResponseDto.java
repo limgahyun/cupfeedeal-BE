@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.cafe.dto.response;
 
 import com.cupfeedeal.domain.cafe.entity.Cafe;
+import com.cupfeedeal.domain.cafeImage.entity.CafeImage;
 
 public record CafeListResponseDto (
         Long id,
@@ -9,14 +10,12 @@ public record CafeListResponseDto (
         String address_lng,
         String address,
         Integer price,
-        String images,
-        Boolean is_like,
-        Boolean is_subscription
+        String image_url,
+        Boolean is_like
 ) {
     public static CafeListResponseDto from(Cafe cafe,
-                                           String image,
-                                           Boolean is_like,
-                                           Boolean is_subscription) {
+                                           CafeImage image,
+                                           Boolean is_like) {
         return new CafeListResponseDto(
                 cafe.getId(),
                 cafe.getName(),
@@ -24,9 +23,8 @@ public record CafeListResponseDto (
                 cafe.getAddressLng(),
                 cafe.getAddress(),
                 cafe.getSubscriptionPrice(),
-                image,
-                is_like,
-                is_subscription
+                image.getImageUrl(),
+                is_like
         );
     }
 }
