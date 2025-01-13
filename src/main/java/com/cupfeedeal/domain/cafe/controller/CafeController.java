@@ -53,7 +53,8 @@ public class CafeController {
 
     @Operation(summary = "카페 검색 결과 리스트 조회")
     @GetMapping
-    public CommonResponse<List<CafeListResponseDto>> getCafeList(@RequestParam("search") String name) {
+    public CommonResponse<List<CafeListResponseDto>> getCafeList(
+            @RequestParam(value = "search", defaultValue = "") String name) {
         List<CafeListResponseDto> cafeList = cafeService.getCafeList(name);
         return new CommonResponse<>(cafeList, "카페 리스트 조회에 성공하였습니다.");
     }

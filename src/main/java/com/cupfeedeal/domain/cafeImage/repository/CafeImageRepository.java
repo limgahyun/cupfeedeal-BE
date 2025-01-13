@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CafeImageRepository extends JpaRepository<CafeImage, Long> {
     List<CafeImage> findAllByCafeId(Long cafeId);
-    CafeImage findByCafe(Cafe cafe);
+    Optional<CafeImage> findByCafeAndIsMainImageIsTrue(Cafe cafe);
 }
