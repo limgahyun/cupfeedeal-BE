@@ -8,6 +8,8 @@ import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.service.CafeService;
+import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
+import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
 import com.cupfeedeal.global.common.annotation.Login;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,7 @@ import java.util.List;
 public class CafeController {
 
     private final CafeService cafeService;
+    private final CafeSubscriptionTypeService cafeSubscriptionTypeService;
 
     @Operation(summary = "cafe 생성")
     @PostMapping
@@ -63,4 +66,10 @@ public class CafeController {
         return new CommonResponse<>(cafeList, "카페 리스트 조회에 성공하였습니다.");
     }
 
+    @Operation(summary = "카페 상세 정보 조회")
+    @GetMapping("/{cafeId}/cafeSubscription/info")
+    public CommonResponse<CafeSubscriptionInfoResponseDto> getCafeSubscriptionInfo(@PathVariable Long cafeId) {
+        CafeSubscriptionInfoResponseDto cafeSubscriptionInfo = cafeSubscriptionTypeService.getCafeSubscriptionType(cafeId);
+        return new CommonResponse<>(cafeSubscriptionInfo, "해당 카페의 상세 정보 조회에 성공하였습니다.");
+    }
 }

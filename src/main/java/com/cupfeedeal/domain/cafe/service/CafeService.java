@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -86,8 +85,6 @@ public class CafeService {
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
                 .map(CafeImageResponseDto::from)
                 .toList();
-
-        log.info("User username: {}", user.getUsername());
 
         // user access token 반영하여 코드 수정
         Boolean is_like = false;

@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.cafeSubscriptionType.entity;
 
+import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,6 +16,10 @@ public class CafeSubscriptionType extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cafe_subscription_type_id")
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cafe_id")
+    private Cafe cafe;
 
     @Column(nullable = false)
     private String name;
