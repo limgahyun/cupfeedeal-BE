@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.cafe.service;
 
+import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
@@ -15,12 +16,14 @@ import com.cupfeedeal.domain.cafeImage.service.CafeImageService;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -77,12 +80,14 @@ public class CafeService {
     /*
     cafe 상세 정보 조회
      */
-    public CafeInfoResponseDto getCafeInfo(Long id) {
+    public CafeInfoResponseDto getCafeInfo(Long id, User user) {
         Cafe cafe = findCafeById(id);
         List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
                 .map(CafeImageResponseDto::from)
                 .toList();
+
+        log.info("User username: {}", user.getUsername());
 
         // user access token 반영하여 코드 수정
         Boolean is_like = false;
