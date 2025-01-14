@@ -30,7 +30,7 @@ public class KakaoService {
     private UserRepository userRepository;
 
     @Autowired
-    public KakaoService(@Value("${kakao.client_id") String clientId, UserRepository userRepository){
+    public KakaoService(@Value("${CLIENT_ID}") String clientId, UserRepository userRepository){
         this.clientId = clientId;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
@@ -45,6 +45,7 @@ public class KakaoService {
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", clientId)
                         .queryParam("code", code)
+                        .queryParam("redirect_uri", "http://localhost:8080/api/v1/auth/callback")
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
                 .retrieve()
@@ -74,7 +75,7 @@ public class KakaoService {
                         .scheme("https")
                         .path("/v2/user/me")
                         .build(true))
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken) // access token 인가
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
@@ -91,7 +92,6 @@ public class KakaoService {
 
         return userInfo;
     }
-
 
 
 

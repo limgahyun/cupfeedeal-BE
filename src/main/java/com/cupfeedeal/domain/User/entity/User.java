@@ -26,11 +26,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", unique = true, updatable = false)
     private Long userId;
-
-    @Column(name = "kakaoId", length =100, nullable = false, unique = true)
-    private String kakaoId;
 
     @Column(name = "nickname", nullable = false, length = 50)
     private String username;

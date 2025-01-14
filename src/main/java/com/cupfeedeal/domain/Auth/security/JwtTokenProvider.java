@@ -29,52 +29,47 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("${JWT_SECRET_KEY")
-    private String secretKey;
+//    @Value("${JWT_SECRET_KEY")
+//    private String secretKey;
+    byte[] keyBytes = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
+    String secretKey = Base64.getEncoder().encodeToString(keyBytes);
 
     private final UserDetailsService userDetailsService;
 
-    //객체 초기화, secretKey를 Base64로 인코딩
-    @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-    }
-
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+    public JwtTokenProvider(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     //토큰 생성
-    public String createToken(String userPK) {
-        Claims claims = Jwts.claims().setSubject(userPK); //JWT payload에 저장되는 정보 단위
+    public String createToken(String email) {
         Date now = new Date();
+
         return Jwts.builder()
-                .setClaims(claims) // 정보 저장
+                .setSubject(email)
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + (30 * 60 * 1000L))) // 토큰 유효시각 설정 (30분)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)  // 암호화 알고리즘과, secret 값
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     // 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserEmail(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     // 토큰에서 회원 정보 추출
-    public String getUserPk(String token) {
+    public String getUserEmail(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
     // 토큰 유효성, 만료일자 확인
-    public boolean validateToken(String jwtToken) {
+    public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
         } catch (Exception e) {
             return false;
         }
