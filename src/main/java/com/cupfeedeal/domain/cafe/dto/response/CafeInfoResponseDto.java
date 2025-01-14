@@ -2,7 +2,6 @@ package com.cupfeedeal.domain.cafe.dto.response;
 
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafeImage.dto.response.CafeImageResponseDto;
-import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionTypeResponseDto;
 
 import java.util.List;
 
