@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("api/v1/auth/login")
 public class KakaoController {
 
-    @Value("${CLIENT_ID}")
+    @Value("${spring.kakao.client_id}")
     private String client_id;
 
-    @Value("${REDIRECT_URI}")
+    @Value("${spring.kakao.redirect_uri}")
     private String redirect_uri;
 
 

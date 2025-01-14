@@ -28,10 +28,12 @@ public class KakaoService {
     private final String KAUTH_TOKEN_URL_HOST;
     private final String KAUTH_USER_URL_HOST;
     private UserRepository userRepository;
+    private final String redirectUri;
 
     @Autowired
-    public KakaoService(@Value("${CLIENT_ID}") String clientId, UserRepository userRepository){
+    public KakaoService(@Value("${spring.kakao.client_id}") String clientId, UserRepository userRepository, @Value("${spring.kakao.redirect_uri}") String redirectUri){
         this.clientId = clientId;
+        this.redirectUri = redirectUri;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
         this.userRepository = userRepository;
@@ -45,7 +47,7 @@ public class KakaoService {
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", clientId)
                         .queryParam("code", code)
-                        .queryParam("redirect_uri", "http://localhost:8080/api/v1/auth/callback")
+                        .queryParam("redirect_uri", redirectUri)
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
                 .retrieve()

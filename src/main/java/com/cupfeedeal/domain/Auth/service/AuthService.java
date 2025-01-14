@@ -31,6 +31,7 @@ public class AuthService {
             }
 
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                    .userId(user.getUserId())
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .token(token)
