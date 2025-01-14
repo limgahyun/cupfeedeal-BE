@@ -99,7 +99,7 @@ public class CafeService {
     /*
     cafe 검색 결과 리스트 조회
      */
-    public List<CafeListResponseDto> getCafeList(final String name) {
+    public List<CafeListResponseDto> getCafeList(final String name, final User user, final Boolean isLike) {
         final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
