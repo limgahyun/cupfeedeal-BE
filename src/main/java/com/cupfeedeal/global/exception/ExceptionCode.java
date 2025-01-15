@@ -26,8 +26,10 @@ public enum ExceptionCode {
 
     // 4000: Cafe error
     NOT_FOUND_CAFE(HttpStatus.NOT_FOUND, 4000, "해당 cafe를 찾을 수 없습니다."),
-    NOT_FOUND_CAFE_LIKE(HttpStatus.NOT_FOUND, 4001, "해당 cafe 좋아요를 찾을 수 없습니다.");
-    // 5000:
+    NOT_FOUND_CAFE_LIKE(HttpStatus.NOT_FOUND, 4001, "해당 cafe 좋아요를 찾을 수 없습니다."),
+
+    // 5000: Subscription error
+    NOT_FOUND_SUBSCRIPTION(HttpStatus.NOT_FOUND, 5000, "구독권을 찾을 수 없습니다.");
 
 
     // 6000:
