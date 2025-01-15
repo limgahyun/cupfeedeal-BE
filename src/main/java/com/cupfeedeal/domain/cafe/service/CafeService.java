@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.cafe.service;
 
+import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
@@ -15,6 +16,7 @@ import com.cupfeedeal.domain.cafeImage.service.CafeImageService;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +79,7 @@ public class CafeService {
     /*
     cafe 상세 정보 조회
      */
-    public CafeInfoResponseDto getCafeInfo(Long id) {
+    public CafeInfoResponseDto getCafeInfo(Long id, User user) {
         Cafe cafe = findCafeById(id);
         List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
@@ -94,7 +96,7 @@ public class CafeService {
     /*
     cafe 검색 결과 리스트 조회
      */
-    public List<CafeListResponseDto> getCafeList(final String name) {
+    public List<CafeListResponseDto> getCafeList(final String name, final User user, final Boolean isLike) {
         final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
