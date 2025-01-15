@@ -25,8 +25,8 @@ public enum ExceptionCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 3000, "해당 유저를 찾을 수 없습니다."),
 
     // 4000: Cafe error
-    NOT_FOUND_CAFE(HttpStatus.NOT_FOUND, 4000, "해당 cafe를 찾을 수 없습니다.");
-
+    NOT_FOUND_CAFE(HttpStatus.NOT_FOUND, 4000, "해당 cafe를 찾을 수 없습니다."),
+    NOT_FOUND_CAFE_LIKE(HttpStatus.NOT_FOUND, 4001, "해당 cafe 좋아요를 찾을 수 없습니다.");
     // 5000:
 
 
