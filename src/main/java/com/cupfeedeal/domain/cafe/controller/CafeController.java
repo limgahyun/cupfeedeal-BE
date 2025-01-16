@@ -42,7 +42,7 @@ public class CafeController {
         return new CommonResponse<>(recommendationList, "추천 카페 조회에 성공하였습니다.");
     }
 
-    @Operation(summary = "추천 카페 조회")
+    @Operation(summary = "새로 오픈 카페 조회")
     @GetMapping("/new")
     public CommonResponse<List<CafeNewOpenListResponseDto>> getOpenCafes() {
         List<CafeNewOpenListResponseDto> openCafeList = cafeService.getNewOpenCafes();
@@ -67,7 +67,7 @@ public class CafeController {
         return new CommonResponse<>(cafeList, "카페 리스트 조회에 성공하였습니다.");
     }
 
-    @Operation(summary = "카페 상세 정보 조회")
+    @Operation(summary = "카페 구독권 조회")
     @GetMapping("/{cafeId}/cafeSubscription/info")
     public CommonResponse<CafeSubscriptionInfoResponseDto> getCafeSubscriptionInfo(@PathVariable Long cafeId) {
         CafeSubscriptionInfoResponseDto cafeSubscriptionInfo = cafeSubscriptionTypeService.getCafeSubscriptionType(cafeId);

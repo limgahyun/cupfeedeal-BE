@@ -61,9 +61,14 @@ public class CafeService {
      */
     public List<CafeRecommendationListResponseDto> getRecommendationCafes() {
         final List<Cafe> cafeList = cafeRepository.findTop7ByIsRecommendedIsTrueOrderByCreatedAtDesc();
-        return cafeList.stream()
-                .map(CafeRecommendationListResponseDto::from)
-                .toList();
+
+        List<CafeRecommendationListResponseDto> cafeRecommendationListResponseDtoList = new ArrayList<>();
+        cafeList.forEach(cafe -> {
+            CafeImage image = cafeImageService.findMainCafeImage(cafe);
+            cafeRecommendationListResponseDtoList.add(CafeRecommendationListResponseDto.from(cafe, image));
+        });
+
+        return cafeRecommendationListResponseDtoList;
     }
 
     /*
@@ -71,9 +76,14 @@ public class CafeService {
      */
     public List<CafeNewOpenListResponseDto> getNewOpenCafes() {
         final List<Cafe> cafeList = cafeRepository.findTop7ByIsNewOpenIsTrueOrderByCreatedAtDesc();
-        return cafeList.stream()
-                .map(CafeNewOpenListResponseDto::from)
-                .toList();
+
+        List<CafeNewOpenListResponseDto> cafeNewOpenListResponseDtoList = new ArrayList<>();
+        cafeList.forEach(cafe -> {
+            CafeImage image = cafeImageService.findMainCafeImage(cafe);
+            cafeNewOpenListResponseDtoList.add(CafeNewOpenListResponseDto.from(cafe, image));
+        });
+
+        return cafeNewOpenListResponseDtoList;
     }
 
     /*
