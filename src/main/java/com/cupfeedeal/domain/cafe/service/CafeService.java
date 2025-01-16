@@ -79,7 +79,7 @@ public class CafeService {
     /*
     cafe 상세 정보 조회
      */
-    public CafeInfoResponseDto getCafeInfo(Long id, User user) {
+    public CafeInfoResponseDto getCafeInfo(Long id, Long userId) {
         Cafe cafe = findCafeById(id);
         List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
@@ -96,7 +96,7 @@ public class CafeService {
     /*
     cafe 검색 결과 리스트 조회
      */
-    public List<CafeListResponseDto> getCafeList(final String name, final User user, final Boolean isLike) {
+    public List<CafeListResponseDto> getCafeList(final String name, final Long userId, final Boolean isLike) {
         final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
