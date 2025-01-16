@@ -51,8 +51,9 @@ public class CafeController {
 
     @Operation(summary = "카페 상세 정보 조회")
     @GetMapping("/{cafeId}")
-    public CommonResponse<CafeInfoResponseDto> getCafeInfo(@PathVariable Long cafeId, @Login User user) {
-        CafeInfoResponseDto cafeInfo = cafeService.getCafeInfo(cafeId, user);
+    public CommonResponse<CafeInfoResponseDto> getCafeInfo(@PathVariable Long cafeId,
+                                                           @RequestParam(value = "userId", defaultValue = "") Long userId) {
+        CafeInfoResponseDto cafeInfo = cafeService.getCafeInfo(cafeId, userId);
         return new CommonResponse<>(cafeInfo, "해당 카페의 상세 정보 조회에 성공하였습니다.");
     }
 
@@ -60,9 +61,9 @@ public class CafeController {
     @GetMapping
     public CommonResponse<List<CafeListResponseDto>> getCafeList(
             @RequestParam(value = "search", defaultValue = "") String name,
-            @Login User user,
+            @RequestParam(value = "userId", defaultValue = "") Long userId,
             @RequestParam(value = "like", defaultValue = "false") Boolean isLike ) {
-        List<CafeListResponseDto> cafeList = cafeService.getCafeList(name, user, isLike);
+        List<CafeListResponseDto> cafeList = cafeService.getCafeList(name, userId, isLike);
         return new CommonResponse<>(cafeList, "카페 리스트 조회에 성공하였습니다.");
     }
 
