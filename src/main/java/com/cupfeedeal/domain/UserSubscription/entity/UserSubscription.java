@@ -22,9 +22,9 @@ public class UserSubscription {
     @Column(name = "user_subscription_id", unique = true, updatable = false)
     private Long userSubscriptionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    private User user;
 
     @Column(name = "cafe_subscription_type_id", nullable = false)
     private Long cafeSubscriptionTypeId;

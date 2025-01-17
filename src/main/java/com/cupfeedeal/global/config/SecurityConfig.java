@@ -72,7 +72,6 @@ public class SecurityConfig {
                         .requestMatchers("/swagger/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        //.requestMatchers("/api/v1/**").hasRole("USER") //user 권한이 있어야 요청 가능
                         .anyRequest().authenticated());
         http
                 .logout((logout) -> logout
