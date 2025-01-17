@@ -36,6 +36,7 @@ public class AuthService {
                     .username(user.getUsername())
                     .token(token)
                     .subscription_count(userSubscriptionRepository.findAllByUser(user).size())
+                    .is_first(false)
                     .build();
             return loginResponseDto;
         }
@@ -61,6 +62,7 @@ public class AuthService {
                     .username(user.getUsername())
                     .token(token)
                     .subscription_count(0)
+                    .is_first(true)
                     .build();
             log.info("[AuthService] userId: {}", user.getUserId());
             return loginResponseDto;

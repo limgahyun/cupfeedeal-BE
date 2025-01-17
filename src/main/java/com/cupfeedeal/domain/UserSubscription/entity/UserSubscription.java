@@ -3,8 +3,11 @@ package com.cupfeedeal.domain.UserSubscription.entity;
 import com.cupfeedeal.domain.User.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.security.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -21,16 +24,16 @@ public class UserSubscription {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userId;
 
     @Column(name = "cafe_subscription_type_id", nullable = false)
     private Long cafeSubscriptionTypeId;
 
     @Column(name = "subscription_start", nullable = false)
-    private Timestamp subscriptionStart;
+    private LocalDateTime subscriptionStart;
 
     @Column(name = "subscription_deadline", nullable = false)
-    private Timestamp subscriptionDeadline;
+    private LocalDateTime subscriptionDeadline;
 
     @Column(name = "isUsed", nullable = false)
     private Boolean isUsed;
