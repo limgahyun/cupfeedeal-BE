@@ -61,9 +61,14 @@ public class CafeService {
      */
     public List<CafeRecommendationListResponseDto> getRecommendationCafes() {
         final List<Cafe> cafeList = cafeRepository.findTop7ByIsRecommendedIsTrueOrderByCreatedAtDesc();
-        return cafeList.stream()
-                .map(CafeRecommendationListResponseDto::from)
-                .toList();
+
+        List<CafeRecommendationListResponseDto> cafeRecommendationListResponseDtoList = new ArrayList<>();
+        cafeList.forEach(cafe -> {
+            CafeImage image = cafeImageService.findMainCafeImage(cafe);
+            cafeRecommendationListResponseDtoList.add(CafeRecommendationListResponseDto.from(cafe, image));
+        });
+
+        return cafeRecommendationListResponseDtoList;
     }
 
     /*
@@ -71,15 +76,20 @@ public class CafeService {
      */
     public List<CafeNewOpenListResponseDto> getNewOpenCafes() {
         final List<Cafe> cafeList = cafeRepository.findTop7ByIsNewOpenIsTrueOrderByCreatedAtDesc();
-        return cafeList.stream()
-                .map(CafeNewOpenListResponseDto::from)
-                .toList();
+
+        List<CafeNewOpenListResponseDto> cafeNewOpenListResponseDtoList = new ArrayList<>();
+        cafeList.forEach(cafe -> {
+            CafeImage image = cafeImageService.findMainCafeImage(cafe);
+            cafeNewOpenListResponseDtoList.add(CafeNewOpenListResponseDto.from(cafe, image));
+        });
+
+        return cafeNewOpenListResponseDtoList;
     }
 
     /*
     cafe 상세 정보 조회
      */
-    public CafeInfoResponseDto getCafeInfo(Long id, User user) {
+    public CafeInfoResponseDto getCafeInfo(Long id, Long userId) {
         Cafe cafe = findCafeById(id);
         List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getCafeId());
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
@@ -96,7 +106,7 @@ public class CafeService {
     /*
     cafe 검색 결과 리스트 조회
      */
-    public List<CafeListResponseDto> getCafeList(final String name, final User user, final Boolean isLike) {
+    public List<CafeListResponseDto> getCafeList(final String name, final Long userId, final Boolean isLike) {
         final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
