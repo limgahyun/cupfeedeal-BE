@@ -29,6 +29,9 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<CommonResponse<UserInfoResponseDto>> getUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
+        if (customUserdetails == null) {
+            throw new IllegalArgumentException("인증되지 않은 사용자입니다.");
+        }
         CommonResponse<UserInfoResponseDto> userInfoResponseDto = userService.getUserInfo(customUserdetails);
         return ResponseEntity.ok(new CommonResponse<>(userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.").getResult());
     }

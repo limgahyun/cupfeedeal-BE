@@ -35,7 +35,7 @@ public class AuthService {
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .token(token)
-                    .subscription_count(userSubscriptionRepository.findAllByUser(user).size())
+//                    .subscription_count(userSubscriptionRepository.findAllByUser(user).size())
                     .is_first(false)
                     .build();
             return loginResponseDto;
@@ -45,6 +45,8 @@ public class AuthService {
                     .username(userInfoResponseDto.kakaoAccount.profile.nickname)
                     .email(userInfoResponseDto.kakaoAccount.email)
                     .created_at(LocalDateTime.now())
+                    .updated_at(LocalDateTime.now())
+                    .user_level(0)
                     .build();
 
             userRepository.save(user);
@@ -61,7 +63,6 @@ public class AuthService {
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .token(token)
-                    .subscription_count(0)
                     .is_first(true)
                     .build();
             log.info("[AuthService] userId: {}", user.getUserId());

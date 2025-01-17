@@ -25,11 +25,11 @@ public class UserService {
     private final UserCupcatRepository userCupcatRepository;
 
     public CommonResponse<UserInfoResponseDto> getUserInfo(CustomUserdetails customUserdetails) {
-        User user = customUserdetails.getUser();
-        if(user == null) {
+        if (customUserdetails == null || customUserdetails.getUser() == null) {
             throw new UsernameNotFoundException(ExceptionCode.USER_NOT_FOUND.getMessage());
         }
 
+        User user = customUserdetails.getUser();
         UserCupcat userCupcat = userCupcatRepository.findByUserId(user.getUserId());
         String cupcatImageUrl = userCupcat != null ? userCupcat.getCupcat().getImageUrl() : null;
 

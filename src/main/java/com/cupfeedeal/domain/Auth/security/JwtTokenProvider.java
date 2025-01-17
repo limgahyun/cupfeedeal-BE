@@ -43,11 +43,11 @@ public class JwtTokenProvider {
     }
 
     //토큰 생성
-    public String createToken(String email) {
+    public String createToken(String username) {
         Date now = new Date();
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + (30 * 60 * 1000L))) // 토큰 유효시각 설정 (30분)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -56,13 +56,26 @@ public class JwtTokenProvider {
 
     // 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserEmail(token));
+        String username = this.getUsername(token);
+
+        if (username == null || username.isBlank()) {
+            System.out.println("토큰에서 추출한 이름이 유효하지 않습니다: " + token);
+            throw new IllegalArgumentException("유효하지 않은 token.");
+        }
+
+        System.out.println("토큰에서 추출한 이름: " + username);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     // 토큰에서 회원 정보 추출
-    public String getUserEmail(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    public String getUsername(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject(); // 보통 이메일이 `subject`에 저장됩니다.
     }
 
     // 토큰 유효성, 만료일자 확인
