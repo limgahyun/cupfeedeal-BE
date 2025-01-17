@@ -1,7 +1,6 @@
 package com.cupfeedeal.domain.User.entity;
 
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
-import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,8 +31,9 @@ public class User implements UserDetails {
     @Column(name = "nickname", nullable = false, length = 50)
     private String username;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserCupcat> userCupcat = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cupcat_id", referencedColumnName = "cupcat_id", nullable = true)
+    private Cupcat cupcat;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UserSubscription> subscriptions = new ArrayList<>();
