@@ -12,7 +12,7 @@ public record CafeSubscriptionInfoResponseDto (
 ){
     public static CafeSubscriptionInfoResponseDto from(Cafe cafe, List<CafeSubscriptionListResponseDto> cafe_subscriptions) {
         return new CafeSubscriptionInfoResponseDto(
-                cafe.getCafeId(),
+                cafe.getId(),
                 cafe.getName(),
                 cafe_subscriptions
         );

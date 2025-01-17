@@ -13,7 +13,7 @@ public record CafeRecommendationListResponseDto (
 ){
     public static CafeRecommendationListResponseDto from(Cafe cafe, CafeImage image) {
         return new CafeRecommendationListResponseDto(
-                cafe.getCafeId(),
+                cafe.getId(),
                 cafe.getName(),
                 cafe.getSignatureMenu(),
                 cafe.getAddress(),

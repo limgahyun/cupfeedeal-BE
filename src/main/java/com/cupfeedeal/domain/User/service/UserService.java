@@ -30,7 +30,7 @@ public class UserService {
             throw new UsernameNotFoundException(ExceptionCode.USER_NOT_FOUND.getMessage());
         }
 
-        UserCupcat userCupcat = userCupcatRepository.findByUser(user);
+        UserCupcat userCupcat = userCupcatRepository.findByUserId(user.getUserId());
         String cupcatImageUrl = userCupcat != null ? userCupcat.getCupcat().getImageUrl() : null;
 
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);

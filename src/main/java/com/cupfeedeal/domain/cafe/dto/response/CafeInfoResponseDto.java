@@ -24,7 +24,7 @@ public record CafeInfoResponseDto (
                                            Boolean is_like,
                                            Boolean is_subscription) {
         return new CafeInfoResponseDto(
-                cafe.getCafeId(),
+                cafe.getId(),
                 cafe.getName(),
                 cafe.getAddressLat(),
                 cafe.getAddressLng(),

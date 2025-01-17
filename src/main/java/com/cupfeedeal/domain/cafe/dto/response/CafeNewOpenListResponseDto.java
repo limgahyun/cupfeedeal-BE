@@ -11,7 +11,7 @@ public record CafeNewOpenListResponseDto (
 ){
     public static CafeNewOpenListResponseDto from(Cafe cafe, CafeImage image) {
         return new CafeNewOpenListResponseDto(
-                cafe.getCafeId(),
+                cafe.getId(),
                 cafe.getName(),
                 cafe.getDescription(),
                 image.getImageUrl()

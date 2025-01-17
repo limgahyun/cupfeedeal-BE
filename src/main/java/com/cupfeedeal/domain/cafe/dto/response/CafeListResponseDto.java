@@ -17,7 +17,7 @@ public record CafeListResponseDto (
                                            CafeImage image,
                                            Boolean is_like) {
         return new CafeListResponseDto(
-                cafe.getCafeId(),
+                cafe.getId(),
                 cafe.getName(),
                 cafe.getAddressLat(),
                 cafe.getAddressLng(),

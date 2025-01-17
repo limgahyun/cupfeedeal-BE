@@ -31,7 +31,7 @@ public class UserCafeLikeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
 
-        Cafe cafe = cafeRepository.findByCafeId(cafeId)
+        Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
 
 
@@ -56,7 +56,7 @@ public class UserCafeLikeService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionCode.USER_NOT_FOUND.getMessage()));
 
-        Cafe cafe = cafeRepository.findByCafeId(cafeId)
+        Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
 
         UserCafeLike userCafeLike = userCafeLikeRepository.findByUserAndCafe(user, cafe)

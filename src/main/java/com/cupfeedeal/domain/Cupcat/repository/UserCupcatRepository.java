@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserCupcatRepository extends JpaRepository<User, Long> {
-    UserCupcat findByUser(User user);
-    List<UserCupcat> findByCupcat(Cupcat cupcat);
+    UserCupcat findByUserId(Long userId);
+
+    User userId(Long userId);
+    //List<UserCupcat> findByCupcat(Cupcat cupcat);
 }
