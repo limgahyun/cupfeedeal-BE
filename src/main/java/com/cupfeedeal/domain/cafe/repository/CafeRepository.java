@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CafeRepository extends JpaRepository<Cafe, Long> {
@@ -16,7 +15,5 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
 
     @Query("SELECT c FROM Cafe c WHERE c.name LIKE %:name% and c.deletedAt is null")
     List<Cafe> findByNameContaining(@Param("name") String name);
-
-    Optional<Cafe> findByCafeId(Long cafeId);
 
 }
