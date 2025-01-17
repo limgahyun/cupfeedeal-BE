@@ -6,14 +6,14 @@ import com.cupfeedeal.domain.cafeImage.entity.CafeImage;
 public record CafeNewOpenListResponseDto (
         Long cafe_id,
         String name,
-        String description,
+        String address,
         String image_url
 ){
     public static CafeNewOpenListResponseDto from(Cafe cafe, CafeImage image) {
         return new CafeNewOpenListResponseDto(
                 cafe.getId(),
                 cafe.getName(),
-                cafe.getDescription(),
+                cafe.getAddress(),
                 image.getImageUrl()
         );
     }
