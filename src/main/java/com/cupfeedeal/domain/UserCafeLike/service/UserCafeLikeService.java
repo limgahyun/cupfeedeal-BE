@@ -26,7 +26,7 @@ public class UserCafeLikeService {
     @Autowired
     private CafeRepository cafeRepository;
 
-    public CommonResponse<String> addCafeLike(Long userId, Long cafeId){
+    public String addCafeLike(Long userId, Long cafeId){
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
@@ -34,12 +34,11 @@ public class UserCafeLikeService {
         Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
 
-
         //유저와 카페의 좋아요가 이미 존재하는 지 확인
-        Optional<UserCafeLike> existingLike = userCafeLikeRepository.findByUserAndCafe(user, cafe);
-        if(existingLike.isPresent()){
-            return new CommonResponse<>("해당 유저는 이미 해당 카페에 좋아요가 있습니다.");
-        }
+        userCafeLikeRepository.findByUserAndCafe(user, cafe)
+                .ifPresent(existingLike -> {
+                    throw new ApplicationException(ExceptionCode.ALREADY_EXIST_LIKE);
+                });
 
         UserCafeLike userCafeLike = new UserCafeLike();
         userCafeLike.setUser(user);
@@ -49,12 +48,12 @@ public class UserCafeLikeService {
 
         userCafeLikeRepository.save(userCafeLike);
 
-        return new CommonResponse<>("좋아요를 성공적으로 추가했습니다.");
+        return "좋아요를 성공적으로 추가했습니다.";
     }
 
-    public CommonResponse<String> deleteCafeLike(Long userId, Long cafeId){
+    public String deleteCafeLike(Long userId, Long cafeId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(ExceptionCode.USER_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
 
         Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
@@ -64,7 +63,7 @@ public class UserCafeLikeService {
 
         userCafeLikeRepository.delete(userCafeLike);
 
-        return new CommonResponse<>("카페 좋아요를 성공적으로 삭제했습니다.");
+        return "카페 좋아요를 성공적으로 삭제했습니다.";
 
     }
 }

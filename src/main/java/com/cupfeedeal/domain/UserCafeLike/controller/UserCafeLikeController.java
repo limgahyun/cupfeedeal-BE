@@ -16,14 +16,14 @@ public class UserCafeLikeController {
 
     @PostMapping("/like")
     public ResponseEntity<CommonResponse<String>> addCafeLike(@RequestBody UserCafeLikeRequestDto userCafeLikeRequestDto) {
-        CommonResponse<String> response = userCafeLikeService.addCafeLike(userCafeLikeRequestDto.getUserId(), userCafeLikeRequestDto.getCafeId());
-        return ResponseEntity.ok(new CommonResponse<>(response, "카페를 성공적으로 추가했습니다.").getResult());
+        userCafeLikeService.addCafeLike(userCafeLikeRequestDto.getUserId(), userCafeLikeRequestDto.getCafeId());
+        return ResponseEntity.ok(new CommonResponse<>("카페를 성공적으로 추가했습니다."));
 
     }
 
     @DeleteMapping("/like")
     public ResponseEntity<CommonResponse<String>> deleteCafeLike(@RequestBody UserCafeLikeRequestDto userCafeLikeRequestDto) {
-        CommonResponse<String> response = userCafeLikeService.deleteCafeLike(userCafeLikeRequestDto.getUserId(), userCafeLikeRequestDto.getCafeId());
-        return ResponseEntity.ok(new CommonResponse<>("카페를 성공적으로 삭제했습니다."));
+        userCafeLikeService.deleteCafeLike(userCafeLikeRequestDto.getUserId(), userCafeLikeRequestDto.getCafeId());
+        return ResponseEntity.ok(new CommonResponse<>( "카페를 성공적으로 추가했습니다."));
     }
 }

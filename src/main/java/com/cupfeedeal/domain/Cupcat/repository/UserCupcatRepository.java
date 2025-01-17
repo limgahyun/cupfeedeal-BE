@@ -13,6 +13,6 @@ import java.util.Optional;
 public interface UserCupcatRepository extends JpaRepository<User, Long> {
     UserCupcat findByUserId(Long userId);
 
-    User userId(Long userId);
+    //User userId(Long userId);
     //List<UserCupcat> findByCupcat(Cupcat cupcat);
 }
