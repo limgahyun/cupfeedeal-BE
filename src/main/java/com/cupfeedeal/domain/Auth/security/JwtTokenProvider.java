@@ -43,11 +43,13 @@ public class JwtTokenProvider {
     }
 
     //토큰 생성
-    public String createToken(String email) {
+    public String createToken(String email, String username, Integer subscription_count) {
         Date now = new Date();
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("username", username)
+                .claim("subscription_count", subscription_count)
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + (30 * 60 * 1000L))) // 토큰 유효시각 설정 (30분)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
