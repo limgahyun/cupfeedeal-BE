@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.Cupcat.entity;
 
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "user_cupcat")
-public class UserCupcat {
+public class UserCupcat extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,7 @@ package com.cupfeedeal.domain.UserCafeLike.service;
 
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
-import com.cupfeedeal.domain.UserCafeLike.domain.UserCafeLike;
+import com.cupfeedeal.domain.UserCafeLike.entity.UserCafeLike;
 import com.cupfeedeal.domain.UserCafeLike.repository.UserCafeLikeRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
@@ -29,7 +29,7 @@ public class UserCafeLikeService {
     public CommonResponse<String> addCafeLike(Long userId, Long cafeId){
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(ExceptionCode.USER_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
 
         Cafe cafe = cafeRepository.findByCafeId(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));

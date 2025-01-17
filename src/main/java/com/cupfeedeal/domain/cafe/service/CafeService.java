@@ -81,7 +81,7 @@ public class CafeService {
      */
     public CafeInfoResponseDto getCafeInfo(Long id, User user) {
         Cafe cafe = findCafeById(id);
-        List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
+        List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getCafeId());
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
                 .map(CafeImageResponseDto::from)
                 .toList();

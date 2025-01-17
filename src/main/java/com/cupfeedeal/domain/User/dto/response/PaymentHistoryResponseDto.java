@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class PaymentHistoryResponseDto {
-    private String cafeName;
-    private Integer subscriptionPrice;
-    private Integer subscriptionPeriod;
-    private LocalDateTime subscriptionStart;
-    private LocalDateTime subscriptionDeadline;
+    public String cafeName;
+    public Integer subscriptionPrice;
+    public Integer subscriptionPeriod;
+    public LocalDateTime subscriptionStart;
+    public LocalDateTime subscriptionDeadline;
 }

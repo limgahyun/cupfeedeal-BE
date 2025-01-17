@@ -30,13 +30,13 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<CommonResponse<UserInfoResponseDto>> getUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
         CommonResponse<UserInfoResponseDto> userInfoResponseDto = userService.getUserInfo(customUserdetails);
-        return ResponseEntity.ok().body(userInfoResponseDto);
+        return ResponseEntity.ok(new CommonResponse<>(userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.").getResult());
     }
 
     @PutMapping("")
     public ResponseEntity<CommonResponse<String>> updateUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails, @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
         CommonResponse<String> response = userService.updateUserInfo(customUserdetails, userInfoUpdateRequestDto.getUsername());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new CommonResponse<>(response, "회원 정보를 성공적으로 수정했습니다.").getResult());
     }
 
     @GetMapping("/{userId}/payment")

@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.Cupcat.entity;
 
+import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import com.cupfeedeal.domain.Cupcat.entity.CupcatLevelEnum;
@@ -16,7 +17,7 @@ import java.util.List;
 @Table(name = "cupcat", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"cupcat_level", "cupcat_type"})
 })
-public class Cupcat {
+public class Cupcat{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

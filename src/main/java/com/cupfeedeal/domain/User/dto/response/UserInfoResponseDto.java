@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserInfoResponseDto {
-    private String username;
-    private Integer user_level;
-    private String cupcatImgUrl;
+    public String username;
+    public Integer user_level;
+    public String cupcatImgUrl;
 }

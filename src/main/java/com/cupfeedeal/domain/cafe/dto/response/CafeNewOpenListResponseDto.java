@@ -9,7 +9,7 @@ public record CafeNewOpenListResponseDto (
 ){
     public static CafeNewOpenListResponseDto from(Cafe cafe) {
         return new CafeNewOpenListResponseDto(
-                cafe.getId(),
+                cafe.getCafeId(),
                 cafe.getName(),
                 cafe.getDescription()
         );

@@ -1,10 +1,10 @@
-package com.cupfeedeal.domain.UserCafeLike.domain;
+package com.cupfeedeal.domain.UserCafeLike.entity;
 
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
+import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @EqualsAndHashCode(of="user_cafe_like_id")
 @Table(name="user_cafe_like")
-public class UserCafeLike {
+public class UserCafeLike extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

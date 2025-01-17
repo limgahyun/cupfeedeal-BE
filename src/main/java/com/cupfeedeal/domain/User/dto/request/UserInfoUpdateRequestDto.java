@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserInfoUpdateRequestDto {
-    private Long userId;
-    private String username;
+    public Long userId;
+    public String username;
 }
