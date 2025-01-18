@@ -9,6 +9,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserInfoUpdateResponseDto {
     private String username;
-    private Integer subscription_count;
-    private String token;
 }

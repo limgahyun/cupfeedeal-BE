@@ -31,9 +31,9 @@ public class UserController {
 
     @GetMapping("")
     public CommonResponse<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
-        if (customUserdetails == null) {
-            throw new IllegalArgumentException("인증되지 않은 사용자입니다.");
-        }
+//        if (customUserdetails == null) {
+//            throw new IllegalArgumentException("인증되지 않은 사용자입니다.");
+//        }
         UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(customUserdetails);
         return new CommonResponse<> (userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.");
     }
@@ -46,9 +46,9 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/payment")
-    public ResponseEntity<CommonResponse<List<PaymentHistoryResponseDto>>> getUserPaymentHistory(@PathVariable Long userId) {
+    public CommonResponse<List<PaymentHistoryResponseDto>> getUserPaymentHistory(@PathVariable Long userId) {
         List<PaymentHistoryResponseDto> paymentHistory = userSubscriptionService.getUserPaymentHistory(userId);
-        return ResponseEntity.ok(new CommonResponse<>(paymentHistory, "유저 결제 내역을 성공적으로 가져왔습니다."));
+        return new CommonResponse<>(paymentHistory, "유저 결제 내역을 성공적으로 가져왔습니다.");
     }
 
 }

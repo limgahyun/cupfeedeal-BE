@@ -25,7 +25,7 @@ public class UserService {
     @Autowired
     private final UserCupcatRepository userCupcatRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+
 
 
     public UserInfoResponseDto getUserInfo(CustomUserdetails customUserdetails) {
@@ -34,6 +34,7 @@ public class UserService {
         }
 
         User user = customUserdetails.getUser();
+
         Optional<UserCupcat> userCupcat = userCupcatRepository.findByUser(user);
         String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
@@ -47,9 +48,7 @@ public class UserService {
         user.setUsername(newUsername);
         userRepository.save(user);
 
-        Integer subscription_count = userSubscriptionRepository.findAllByUser(user).size();
-        String token = jwtTokenProvider.createToken(newUsername, subscription_count);
-        UserInfoUpdateResponseDto userInfoUpdateResponseDto = new UserInfoUpdateResponseDto(newUsername, subscription_count, token);
+        UserInfoUpdateResponseDto userInfoUpdateResponseDto = new UserInfoUpdateResponseDto(newUsername);
 
         return userInfoUpdateResponseDto;
     }
