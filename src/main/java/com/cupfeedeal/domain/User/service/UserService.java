@@ -1,17 +1,18 @@
 package com.cupfeedeal.domain.User.service;
 
+import com.cupfeedeal.domain.Auth.security.JwtTokenProvider;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
-import com.cupfeedeal.domain.User.dto.request.UserInfoUpdateRequestDto;
 import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
+import com.cupfeedeal.domain.User.dto.response.UserInfoUpdateResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
-import com.cupfeedeal.global.common.response.CommonResponse;
+import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
+import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,26 +24,33 @@ public class UserService {
     private final UserRepository userRepository;
     @Autowired
     private final UserCupcatRepository userCupcatRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public CommonResponse<UserInfoResponseDto> getUserInfo(CustomUserdetails customUserdetails) {
+
+    public UserInfoResponseDto getUserInfo(CustomUserdetails customUserdetails) {
         if (customUserdetails == null || customUserdetails.getUser() == null) {
-            throw new UsernameNotFoundException(ExceptionCode.USER_NOT_FOUND.getMessage());
+            throw new ApplicationException(ExceptionCode.USER_NOT_FOUND);
         }
 
         User user = customUserdetails.getUser();
-        UserCupcat userCupcat = userCupcatRepository.findByUserId(user.getUserId());
-        String cupcatImageUrl = userCupcat != null ? userCupcat.getCupcat().getImageUrl() : null;
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findByUser(user);
+        String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);
 
-        return new CommonResponse<>(userInfoResponseDto, "유저 정보를 성공적으로 조회했습니다.");
+        return userInfoResponseDto;
     }
 
-    public CommonResponse<String> updateUserInfo(CustomUserdetails customUserdetails, String newUsername) {
+    public UserInfoUpdateResponseDto updateUserInfo(CustomUserdetails customUserdetails, String newUsername) {
         User user = customUserdetails.getUser();
         user.setUsername(newUsername);
         userRepository.save(user);
 
-        return new CommonResponse<>("유저 정보를 성공적으로 수정했습니다.");
+        Integer subscription_count = userSubscriptionRepository.findAllByUser(user).size();
+        String token = jwtTokenProvider.createToken(newUsername, subscription_count);
+        UserInfoUpdateResponseDto userInfoUpdateResponseDto = new UserInfoUpdateResponseDto(newUsername, subscription_count, token);
+
+        return userInfoUpdateResponseDto;
     }
 }

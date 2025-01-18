@@ -23,7 +23,9 @@ public class AuthService {
     public LoginResponseDto login(KakaoUserInfoResponseDto userInfoResponseDto) {
         if (userRepository.findByEmail(userInfoResponseDto.getKakaoAccount().email).isPresent()) {
             User user = userRepository.findByEmail(userInfoResponseDto.getKakaoAccount().email).get();
-            String token = jwtTokenProvider.createToken(user.getUsername());
+            Integer subscription_count = userSubscriptionRepository.findAllByUser(user).size();
+
+            String token = jwtTokenProvider.createToken(user.getUsername(), subscription_count);
 
             // 디버깅: 토큰이 생성되지 않았다면 로그 출력
             if (token == null || token.isEmpty()) {
@@ -31,11 +33,7 @@ public class AuthService {
             }
 
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                    .userId(user.getUserId())
-                    .email(user.getEmail())
-                    .username(user.getUsername())
                     .token(token)
-//                    .subscription_count(userSubscriptionRepository.findAllByUser(user).size())
                     .is_first(false)
                     .build();
             return loginResponseDto;
@@ -51,7 +49,7 @@ public class AuthService {
 
             userRepository.save(user);
 
-            String token = jwtTokenProvider.createToken(user.getUsername());
+            String token = jwtTokenProvider.createToken(user.getUsername(), 0);
 
             // 디버깅: 토큰이 생성되지 않았다면 로그 출력
             if (token == null || token.isEmpty()) {
@@ -59,9 +57,6 @@ public class AuthService {
             }
 
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                    .userId(user.getUserId())
-                    .email(user.getEmail())
-                    .username(user.getUsername())
                     .token(token)
                     .is_first(true)
                     .build();

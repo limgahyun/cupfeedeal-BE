@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 @Slf4j
 @Component
 public class JwtTokenProvider {
@@ -43,13 +45,30 @@ public class JwtTokenProvider {
     }
 
     //토큰 생성
-    public String createToken(String username) {
+    public String createToken(String username, Integer subscription_count) {
         Date now = new Date();
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("subscription_count", subscription_count)
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + (30 * 60 * 1000L))) // 토큰 유효시각 설정 (30분)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
+
+    public String regenerateToken(String token, String newUsername) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        claims.setSubject(newUsername);
+
+        return Jwts.builder()
+                .setClaims(claims) // 수정된 클레임 사용
+                .setIssuedAt(new Date()) // 발행 시간 갱신
+                .setExpiration(claims.getExpiration()) // 기존 만료 시간 유지
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
@@ -75,7 +94,7 @@ public class JwtTokenProvider {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject(); // 보통 이메일이 `subject`에 저장됩니다.
+        return claims.getSubject();
     }
 
     // 토큰 유효성, 만료일자 확인
