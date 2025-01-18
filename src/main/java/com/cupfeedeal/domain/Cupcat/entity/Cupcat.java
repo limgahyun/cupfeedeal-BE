@@ -23,9 +23,6 @@ public class Cupcat{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cupcatId;
 
-    @OneToMany(mappedBy = "cupcat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserCupcat> userCupcats = new ArrayList<>();
-
     @Enumerated(EnumType.STRING)
     @Column(name = "cupcat_level", nullable = false, length = 10)
     private CupcatLevelEnum cupcat_level;

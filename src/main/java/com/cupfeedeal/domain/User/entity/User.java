@@ -32,9 +32,6 @@ public class User implements UserDetails {
     @Column(name = "nickname", nullable = false, length = 50)
     private String username;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserCupcat> userCupcat = new ArrayList<>();
-
     @Column(name = "phone_num", nullable = true, length = 20)
     private String phone_num;
 
