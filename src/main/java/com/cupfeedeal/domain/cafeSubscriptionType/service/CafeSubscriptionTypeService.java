@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.cafeSubscriptionType.service;
 
 import com.cupfeedeal.domain.cafe.entity.Cafe;
+import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafe.service.CafeService;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionListResponseDto;

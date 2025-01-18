@@ -42,8 +42,6 @@ public class AuthService {
             User user = User.builder()
                     .username(userInfoResponseDto.kakaoAccount.profile.nickname)
                     .email(userInfoResponseDto.kakaoAccount.email)
-                    .created_at(LocalDateTime.now())
-                    .updated_at(LocalDateTime.now())
                     .user_level(0)
                     .build();
 

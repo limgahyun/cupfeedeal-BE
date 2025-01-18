@@ -1,16 +1,13 @@
 package com.cupfeedeal.domain.cafe.controller;
 
-import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
-import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.service.CafeService;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
-import com.cupfeedeal.global.common.annotation.Login;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
