@@ -16,4 +16,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Query("SELECT c FROM Cafe c WHERE c.name LIKE %:name% and c.deletedAt is null")
     List<Cafe> findByNameContaining(@Param("name") String name);
 
+    @Query("SELECT c.name FROM Cafe c WHERE c.id = :cafeId and c.deletedAt is null")
+    String findNameByCafeId(Long cafeId);
+
 }

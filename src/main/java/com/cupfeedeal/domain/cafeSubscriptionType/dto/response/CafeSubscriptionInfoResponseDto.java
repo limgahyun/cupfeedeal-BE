@@ -1,8 +1,5 @@
 package com.cupfeedeal.domain.cafeSubscriptionType.dto.response;
 
-import com.cupfeedeal.domain.cafe.entity.Cafe;
-import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
-
 import java.util.List;
 
 public record CafeSubscriptionInfoResponseDto (
@@ -10,10 +7,10 @@ public record CafeSubscriptionInfoResponseDto (
         String cafe_name,
         List<CafeSubscriptionListResponseDto> cafe_subscriptions
 ){
-    public static CafeSubscriptionInfoResponseDto from(Cafe cafe, List<CafeSubscriptionListResponseDto> cafe_subscriptions) {
+    public static CafeSubscriptionInfoResponseDto from(Long cafeId, String cafeName, List<CafeSubscriptionListResponseDto> cafe_subscriptions) {
         return new CafeSubscriptionInfoResponseDto(
-                cafe.getId(),
-                cafe.getName(),
+                cafeId,
+                cafeName,
                 cafe_subscriptions
         );
     }
