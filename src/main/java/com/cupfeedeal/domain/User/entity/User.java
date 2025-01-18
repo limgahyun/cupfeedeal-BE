@@ -41,15 +41,6 @@ public class User implements UserDetails {
     @Column(name = "user_level")
     private Integer user_level; // 0, 1, 2, 3, 4, 5 중 하나
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updated_at;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deleted_at;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
