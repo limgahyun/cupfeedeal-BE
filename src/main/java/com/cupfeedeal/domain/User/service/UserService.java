@@ -26,8 +26,6 @@ public class UserService {
     private final UserCupcatRepository userCupcatRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
 
-
-
     public UserInfoResponseDto getUserInfo(CustomUserdetails customUserdetails) {
         if (customUserdetails == null || customUserdetails.getUser() == null) {
             throw new ApplicationException(ExceptionCode.USER_NOT_FOUND);

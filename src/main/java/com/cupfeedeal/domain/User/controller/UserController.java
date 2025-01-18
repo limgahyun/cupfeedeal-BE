@@ -45,10 +45,10 @@ public class UserController {
         return new CommonResponse<>(userInfoUpdateResponseDto, "회원 정보를 성공적으로 수정했습니다.");
     }
 
-    @GetMapping("/{userId}/payment")
-    public CommonResponse<List<PaymentHistoryResponseDto>> getUserPaymentHistory(@PathVariable Long userId) {
-        List<PaymentHistoryResponseDto> paymentHistory = userSubscriptionService.getUserPaymentHistory(userId);
-        return new CommonResponse<>(paymentHistory, "유저 결제 내역을 성공적으로 가져왔습니다.");
+    @GetMapping("/payment")
+    public CommonResponse<List<PaymentHistoryResponseDto>> getUserPaymentHistory(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
+        List<PaymentHistoryResponseDto> paymentHistoryResponseDto = userSubscriptionService.getUserPaymentHistory(customUserdetails);
+        return new CommonResponse<>(paymentHistoryResponseDto, "유저 결제 내역을 성공적으로 가져왔습니다.");
     }
 
 }

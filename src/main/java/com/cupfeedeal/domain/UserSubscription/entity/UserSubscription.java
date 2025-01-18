@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.UserSubscription.entity;
 
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.cglib.core.Local;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "user_subscription")
-public class UserSubscription {
+public class UserSubscription extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_subscription_id", unique = true, updatable = false)
@@ -41,15 +42,6 @@ public class UserSubscription {
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_status", nullable = false)
     private SubscriptionStatus subscriptionStatus;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Timestamp createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private Timestamp updatedAt;
-
-    @Column(name = "deleted_at")
-    private Timestamp deletedAt;
 
     public enum SubscriptionStatus {
         CANCELED, EXPIRED, VALID

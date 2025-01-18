@@ -2,6 +2,7 @@ package com.cupfeedeal.domain.UserSubscription.sevice;
 
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
+import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
@@ -27,9 +28,11 @@ public class UserSubscriptionService {
     @Autowired
     private final CafeRepository cafeRepository;
 
-    public List<PaymentHistoryResponseDto> getUserPaymentHistory(Long userId) {
+    public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
-        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUser_UserId(userId);
+        User user = customUserdetails.getUser();
+
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
         List<PaymentHistoryResponseDto> responseList = new ArrayList<>();
 
         for (UserSubscription subscription : userSubscriptions) {
