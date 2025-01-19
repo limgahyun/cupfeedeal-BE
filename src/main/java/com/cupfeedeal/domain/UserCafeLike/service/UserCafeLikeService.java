@@ -42,6 +42,7 @@ public class UserCafeLikeService {
                 });
 
         UserCafeLike userCafeLike = UserCafeLike.builder()
+                .user(user)
                 .cafe(cafe)
                 .build();
 
