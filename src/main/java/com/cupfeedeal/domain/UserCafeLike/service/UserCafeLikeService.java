@@ -1,16 +1,17 @@
 package com.cupfeedeal.domain.UserCafeLike.service;
 
+import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
+import com.cupfeedeal.domain.UserCafeLike.dto.request.UserCafeLikeRequestDto;
+import com.cupfeedeal.domain.UserCafeLike.dto.response.UserCafeLikeResponseDto;
 import com.cupfeedeal.domain.UserCafeLike.entity.UserCafeLike;
 import com.cupfeedeal.domain.UserCafeLike.repository.UserCafeLikeRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
-import com.cupfeedeal.global.common.response.CommonResponse;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,11 +27,11 @@ public class UserCafeLikeService {
     @Autowired
     private CafeRepository cafeRepository;
 
-    public String addCafeLike(Long userId, Long cafeId){
+    public UserCafeLikeResponseDto addCafeLike(CustomUserdetails customUserdetails, UserCafeLikeRequestDto userCafeLikeRequestDto){
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
+        User user = customUserdetails.getUser();
 
+        Long cafeId = userCafeLikeRequestDto.getCafeId();
         Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
 
@@ -40,15 +41,13 @@ public class UserCafeLikeService {
                     throw new ApplicationException(ExceptionCode.ALREADY_EXIST_LIKE);
                 });
 
-        UserCafeLike userCafeLike = new UserCafeLike();
-        userCafeLike.setUser(user);
-        userCafeLike.setCafe(cafe);
-        userCafeLike.setCreatedAt(LocalDateTime.now());
-        userCafeLike.setUpdatedAt(LocalDateTime.now());
+        UserCafeLike userCafeLike = UserCafeLike.builder()
+                .cafe(cafe)
+                .build();
 
         userCafeLikeRepository.save(userCafeLike);
 
-        return "좋아요를 성공적으로 추가했습니다.";
+        return UserCafeLikeResponseDto.from(userCafeLike);
     }
 
     public String deleteCafeLike(Long userId, Long cafeId){

@@ -6,6 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserCafeLikeRequestDto {
-    private Long userId;
     private Long cafeId;
 }
