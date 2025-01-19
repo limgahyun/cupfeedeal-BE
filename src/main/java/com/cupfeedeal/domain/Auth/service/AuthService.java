@@ -25,7 +25,7 @@ public class AuthService {
             User user = userRepository.findByEmail(userInfoResponseDto.getKakaoAccount().email).get();
             Integer subscription_count = userSubscriptionRepository.findAllByUser(user).size();
 
-            String token = jwtTokenProvider.createToken(user.getEmail(), user.getUsername(), subscription_count);
+            String token = jwtTokenProvider.createToken(user.getUserId());
 
             // 디버깅: 토큰이 생성되지 않았다면 로그 출력
             if (token == null || token.isEmpty()) {
@@ -33,7 +33,9 @@ public class AuthService {
             }
 
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                    .username(user.getUsername())
                     .token(token)
+                    .subscription_count(subscription_count)
                     .is_first(false)
                     .build();
             return loginResponseDto;
@@ -42,12 +44,12 @@ public class AuthService {
             User user = User.builder()
                     .username(userInfoResponseDto.kakaoAccount.profile.nickname)
                     .email(userInfoResponseDto.kakaoAccount.email)
-                    .created_at(LocalDateTime.now())
+                    .user_level(0)
                     .build();
 
             userRepository.save(user);
 
-            String token = jwtTokenProvider.createToken(user.getEmail(), user.getUsername(), 0);
+            String token = jwtTokenProvider.createToken(user.getUserId());
 
             // 디버깅: 토큰이 생성되지 않았다면 로그 출력
             if (token == null || token.isEmpty()) {
@@ -55,8 +57,10 @@ public class AuthService {
             }
 
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                    .username(user.getUsername())
                     .token(token)
                     .is_first(true)
+                    .subscription_count(userSubscriptionRepository.findAllByUser(user).size())
                     .build();
             log.info("[AuthService] userId: {}", user.getUserId());
             return loginResponseDto;
