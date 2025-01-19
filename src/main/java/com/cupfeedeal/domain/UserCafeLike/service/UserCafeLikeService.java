@@ -50,10 +50,10 @@ public class UserCafeLikeService {
         return UserCafeLikeResponseDto.from(userCafeLike);
     }
 
-    public String deleteCafeLike(Long userId, Long cafeId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
+    public String deleteCafeLike(CustomUserdetails customUserdetails, UserCafeLikeRequestDto userCafeLikeRequestDto){
+        User user = customUserdetails.getUser();
 
+        Long cafeId = userCafeLikeRequestDto.getCafeId();
         Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE));
 

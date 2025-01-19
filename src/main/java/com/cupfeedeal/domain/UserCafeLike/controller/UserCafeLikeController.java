@@ -25,8 +25,8 @@ public class UserCafeLikeController {
     }
 
     @DeleteMapping("/like")
-    public ResponseEntity<CommonResponse<String>> deleteCafeLike(@RequestBody UserCafeLikeRequestDto userCafeLikeRequestDto) {
-        userCafeLikeService.deleteCafeLike(userCafeLikeRequestDto.getUserId(), userCafeLikeRequestDto.getCafeId());
-        return ResponseEntity.ok(new CommonResponse<>( "카페를 성공적으로 추가했습니다."));
+    public CommonResponse<String> deleteCafeLike(@AuthenticationPrincipal CustomUserdetails customUserdetails, @RequestBody UserCafeLikeRequestDto userCafeLikeRequestDto) {
+        String message = userCafeLikeService.deleteCafeLike(customUserdetails, userCafeLikeRequestDto);
+        return new CommonResponse<>(message);
     }
 }
