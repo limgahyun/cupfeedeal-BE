@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.User.service;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
+import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,5 +33,12 @@ public class CustomUserDetailService implements UserDetailsService {
                 });
 
         return new CustomUserdetails(user);
+    }
+
+    public User loadUserByCustomUserDetails(CustomUserdetails customUserdetails) {
+        if (customUserdetails == null) {
+            throw new ApplicationException(ExceptionCode.USER_NOT_FOUND);
+        }
+        return customUserdetails.getUser();
     }
 }

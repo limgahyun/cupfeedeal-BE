@@ -40,9 +40,29 @@ public class UserSubscription extends BaseEntity {
     private LocalDateTime subscriptionDeadline;
 
     @Column(name = "isUsed", nullable = false)
-    private Boolean isUsed;
+    private Boolean isUsed = false;
+
+    @Column(name = "using_count", nullable = false)
+    private Integer usingCount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_status", nullable = false)
     private SubscriptionStatus subscriptionStatus;
+
+    @PrePersist
+    public void prePersist() {
+        if (isUsed == null) {
+            isUsed = false;
+        }
+    }
+
+    @Builder
+    public UserSubscription(User user, CafeSubscriptionType cafeSubscriptionType, LocalDateTime subscriptionStart, LocalDateTime subscriptionDeadline, Integer usingCount, SubscriptionStatus subscriptionStatus) {
+        this.user = user;
+        this.cafeSubscriptionType = cafeSubscriptionType;
+        this.subscriptionStart = subscriptionStart;
+        this.subscriptionDeadline = subscriptionDeadline;
+        this.usingCount = usingCount;
+        this.subscriptionStatus = subscriptionStatus;
+    }
 }

@@ -3,12 +3,15 @@ package com.cupfeedeal.domain.UserSubscription.sevice;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.domain.User.service.CustomUserDetailService;
+import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTypeRepository;
+import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,10 @@ public class UserSubscriptionService {
     private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
     @Autowired
     private final CafeRepository cafeRepository;
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
+    @Autowired
+    private CafeSubscriptionTypeService cafeSubscriptionTypeService;
 
     public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
@@ -54,9 +61,12 @@ public class UserSubscriptionService {
         return responseList;
     }
 
-    public Void createUserSubscription(CustomUserdetails customUserdetails, CafeSubscriptionType cafeSubscriptionType) {
-        User user = customUserdetails.getUser();
+    public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
-
+        CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
+        // user subscription 저장
+        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType);
+        userSubscriptionRepository.save(userSubscription);
     }
 }
