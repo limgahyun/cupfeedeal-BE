@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.UserSubscription.entity;
 
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
@@ -44,9 +45,4 @@ public class UserSubscription extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "subscription_status", nullable = false)
     private SubscriptionStatus subscriptionStatus;
-
-    public enum SubscriptionStatus {
-        CANCELED, EXPIRED, VALID
-    }
-
 }

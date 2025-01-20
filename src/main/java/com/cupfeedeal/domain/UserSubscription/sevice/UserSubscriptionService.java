@@ -53,4 +53,10 @@ public class UserSubscriptionService {
 
         return responseList;
     }
+
+    public Void createUserSubscription(CustomUserdetails customUserdetails, CafeSubscriptionType cafeSubscriptionType) {
+        User user = customUserdetails.getUser();
+
+
+    }
 }
