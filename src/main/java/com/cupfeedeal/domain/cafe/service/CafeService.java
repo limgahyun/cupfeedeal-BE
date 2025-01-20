@@ -110,65 +110,44 @@ public class CafeService {
     }
 
     /*
-    cafe 검색 결과 리스트 조회
-     */
+    Cafe 검색 결과 리스트 조회
+    */
     public List<CafeListResponseDto> getCafeList(final String name, final CustomUserdetails customUserdetails, final Boolean isLike) {
-        List<CafeListResponseDto> cafeListResponseDtoList = (customUserdetails == null)
-                ? getCafeListForGuest(name) // 인증되지 않은 사용자 로직
-                : getCafeListForUser(name, customUserdetails, isLike); // 인증된 사용자 로직
+        List<Cafe> cafeList;
 
-        return cafeListResponseDtoList;
+        if (customUserdetails == null) {
+            // 인증되지 않은 사용자 로직
+            cafeList = cafeRepository.findByNameContaining(name);
+            return mapToCafeListResponseDtos(cafeList, null);
+        }
+
+        // 인증된 사용자 로직
+        User user = customUserdetails.getUser();
+        if (isLike) {
+            // 좋아요 한 카페만 조회
+            cafeList = cafeRepository.findByNameContainingAndUserLike(name, user);
+        } else {
+            // 전체 카페 조회
+            cafeList = cafeRepository.findByNameContaining(name);
+        }
+        return mapToCafeListResponseDtos(cafeList, user);
     }
 
     /*
-    인증되지 않은 사용자의 cafe 검색 결과 리스트 조회
-     */
-    public List<CafeListResponseDto> getCafeListForGuest(final String name) {
-        final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
+        공통 로직: Cafe 리스트를 CafeListResponseDto로 변환
+    */
+    private List<CafeListResponseDto> mapToCafeListResponseDtos(List<Cafe> cafeList, User user) {
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
         cafeList.forEach(cafe -> {
-            // cafe image 조회
-            CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
-                    .orElse(null);
+            // Cafe 이미지 조회
+            CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe).orElse(null);
 
-            cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, false));
+            // 저장 여부 반환 (인증된 사용자일 경우에만 확인)
+            boolean isLike = user != null && userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
+
+            cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, isLike));
         });
-
-        return cafeListResponseDtoList;
-    }
-
-    /*
-    인증된 사용자의 cafe 검색 결과 리스트 조회
-     */
-    public List<CafeListResponseDto> getCafeListForUser(final String name, final CustomUserdetails customUserdetails, final Boolean isLike) {
-        User user = customUserdetails.getUser();
-        List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
-
-        if (!isLike){
-            final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
-
-            cafeList.forEach(cafe -> {
-                // cafe image 조회
-                CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
-                        .orElse(null);
-
-                // 카페 저장 여부 반환
-                Boolean is_like = userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
-
-                cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, is_like));
-            });
-        } else {
-            final List<Cafe> cafeList = cafeRepository.findByNameContainingAndUserLike(name, user);
-
-            cafeList.forEach(cafe -> {
-                // cafe image 조회
-                CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
-                        .orElse(null);
-
-                cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, true));
-            });
-        }
 
         return cafeListResponseDtoList;
     }
