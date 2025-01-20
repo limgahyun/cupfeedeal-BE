@@ -60,9 +60,9 @@ public class CafeController {
     @GetMapping
     public CommonResponse<List<CafeListResponseDto>> getCafeList(
             @RequestParam(value = "search", defaultValue = "") String name,
-            @RequestParam(value = "userId", defaultValue = "") Long userId,
+            @AuthenticationPrincipal CustomUserdetails customUserdetails,
             @RequestParam(value = "like", defaultValue = "false") Boolean isLike ) {
-        List<CafeListResponseDto> cafeList = cafeService.getCafeList(name, userId, isLike);
+        List<CafeListResponseDto> cafeList = cafeService.getCafeList(name, customUserdetails, isLike);
         return new CommonResponse<>(cafeList, "카페 리스트 조회에 성공하였습니다.");
     }
 

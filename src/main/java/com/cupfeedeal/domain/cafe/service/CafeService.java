@@ -2,7 +2,6 @@ package com.cupfeedeal.domain.cafe.service;
 
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
-import com.cupfeedeal.domain.UserCafeLike.entity.UserCafeLike;
 import com.cupfeedeal.domain.UserCafeLike.repository.UserCafeLikeRepository;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
@@ -19,7 +18,6 @@ import com.cupfeedeal.domain.cafeImage.service.CafeImageService;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,7 +92,7 @@ public class CafeService {
     cafe 상세 정보 조회
      */
     public CafeInfoResponseDto getCafeInfo(Long id, CustomUserdetails customUserdetails) {
-        User user = customUserdetails.getUser();
+        User user = (customUserdetails == null) ? null : customUserdetails.getUser();
         Cafe cafe = findCafeById(id);
 
         List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
@@ -103,7 +101,7 @@ public class CafeService {
                 .toList();
 
         // 카페 저장 여부 반환
-        Boolean is_like = userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
+        Boolean is_like = (user != null) && userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
 
         // 카페 구독 여부 반환
         Boolean is_subscribed = false;
@@ -114,15 +112,63 @@ public class CafeService {
     /*
     cafe 검색 결과 리스트 조회
      */
-    public List<CafeListResponseDto> getCafeList(final String name, final Long userId, final Boolean isLike) {
+    public List<CafeListResponseDto> getCafeList(final String name, final CustomUserdetails customUserdetails, final Boolean isLike) {
+        List<CafeListResponseDto> cafeListResponseDtoList = (customUserdetails == null)
+                ? getCafeListForGuest(name) // 인증되지 않은 사용자 로직
+                : getCafeListForUser(name, customUserdetails, isLike); // 인증된 사용자 로직
+
+        return cafeListResponseDtoList;
+    }
+
+    /*
+    인증되지 않은 사용자의 cafe 검색 결과 리스트 조회
+     */
+    public List<CafeListResponseDto> getCafeListForGuest(final String name) {
         final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
         List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
 
         cafeList.forEach(cafe -> {
+            // cafe image 조회
             CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
-                            .orElse(null);
+                    .orElse(null);
+
             cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, false));
         });
+
+        return cafeListResponseDtoList;
+    }
+
+    /*
+    인증된 사용자의 cafe 검색 결과 리스트 조회
+     */
+    public List<CafeListResponseDto> getCafeListForUser(final String name, final CustomUserdetails customUserdetails, final Boolean isLike) {
+        User user = customUserdetails.getUser();
+        List<CafeListResponseDto> cafeListResponseDtoList = new ArrayList<>();
+
+        if (!isLike){
+            final List<Cafe> cafeList = cafeRepository.findByNameContaining(name);
+
+            cafeList.forEach(cafe -> {
+                // cafe image 조회
+                CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
+                        .orElse(null);
+
+                // 카페 저장 여부 반환
+                Boolean is_like = userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
+
+                cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, is_like));
+            });
+        } else {
+            final List<Cafe> cafeList = cafeRepository.findByNameContainingAndUserLike(name, user);
+
+            cafeList.forEach(cafe -> {
+                // cafe image 조회
+                CafeImage image = cafeImageRepository.findByCafeAndIsMainImageIsTrue(cafe)
+                        .orElse(null);
+
+                cafeListResponseDtoList.add(CafeListResponseDto.from(cafe, image, true));
+            });
+        }
 
         return cafeListResponseDtoList;
     }
