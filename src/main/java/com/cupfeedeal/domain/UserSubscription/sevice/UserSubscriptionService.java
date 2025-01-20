@@ -36,8 +36,7 @@ public class UserSubscriptionService {
         List<PaymentHistoryResponseDto> responseList = new ArrayList<>();
 
         for (UserSubscription subscription : userSubscriptions) {
-            CafeSubscriptionType subscriptionType = cafeSubscriptionTypeRepository.findById(subscription.getCafeSubscriptionTypeId())
-                    .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_SUBSCRIPTION));
+            CafeSubscriptionType subscriptionType = subscription.getCafeSubscriptionType();
 
             Cafe cafe = subscriptionType.getCafe();
 

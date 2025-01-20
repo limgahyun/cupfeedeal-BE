@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.UserSubscription.entity;
 
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,8 +28,9 @@ public class UserSubscription extends BaseEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 
-    @Column(name = "cafe_subscription_type_id", nullable = false)
-    private Long cafeSubscriptionTypeId;
+    @ManyToOne
+    @JoinColumn(name = "cafe_subscription_type_id", nullable = false)
+    private CafeSubscriptionType cafeSubscriptionType;
 
     @Column(name = "subscription_start", nullable = false)
     private LocalDateTime subscriptionStart;

@@ -1,6 +1,9 @@
 package com.cupfeedeal.domain.cafe.service;
 
+import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.domain.UserCafeLike.entity.UserCafeLike;
+import com.cupfeedeal.domain.UserCafeLike.repository.UserCafeLikeRepository;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
@@ -31,6 +34,7 @@ public class CafeService {
     private final CafeRepository cafeRepository;
     private final CafeImageService cafeImageService;
     private final CafeImageRepository cafeImageRepository;
+    private final UserCafeLikeRepository userCafeLikeRepository;
 
     public Cafe findCafeById(Long id) {
         return cafeRepository.findById(id)
@@ -89,15 +93,19 @@ public class CafeService {
     /*
     cafe 상세 정보 조회
      */
-    public CafeInfoResponseDto getCafeInfo(Long id, Long userId) {
+    public CafeInfoResponseDto getCafeInfo(Long id, CustomUserdetails customUserdetails) {
+        User user = customUserdetails.getUser();
         Cafe cafe = findCafeById(id);
+
         List<CafeImage> cafeImages = cafeImageRepository.findAllByCafeId(cafe.getId());
         List<CafeImageResponseDto> cafeImageResponseDtoList = cafeImages.stream()
                 .map(CafeImageResponseDto::from)
                 .toList();
 
-        // user access token 반영하여 코드 수정
-        Boolean is_like = false;
+        // 카페 저장 여부 반환
+        Boolean is_like = userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
+
+        // 카페 구독 여부 반환
         Boolean is_subscribed = false;
 
         return CafeInfoResponseDto.from(cafe, cafeImageResponseDtoList, is_like, is_subscribed);

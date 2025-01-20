@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.cafe.controller;
 
+import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
@@ -12,6 +13,7 @@ import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,8 +51,8 @@ public class CafeController {
     @Operation(summary = "카페 상세 정보 조회")
     @GetMapping("/{cafeId}")
     public CommonResponse<CafeInfoResponseDto> getCafeInfo(@PathVariable Long cafeId,
-                                                           @RequestParam(value = "userId", defaultValue = "") Long userId) {
-        CafeInfoResponseDto cafeInfo = cafeService.getCafeInfo(cafeId, userId);
+                                                           @AuthenticationPrincipal CustomUserdetails customUserdetails) {
+        CafeInfoResponseDto cafeInfo = cafeService.getCafeInfo(cafeId, customUserdetails);
         return new CommonResponse<>(cafeInfo, "해당 카페의 상세 정보 조회에 성공하였습니다.");
     }
 
