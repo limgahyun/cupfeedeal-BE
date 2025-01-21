@@ -34,7 +34,7 @@ public class UserService {
 
         User user = customUserdetails.getUser();
 
-        Optional<UserCupcat> userCupcat = userCupcatRepository.findByUser(user);
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
         String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);
