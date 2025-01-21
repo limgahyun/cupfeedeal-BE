@@ -1,5 +1,10 @@
 package com.cupfeedeal.domain.UserSubscription.sevice;
 
+import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
+import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
+import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
+import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
+import com.cupfeedeal.domain.Cupcat.service.UserCupcatService;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
@@ -12,8 +17,6 @@ import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTypeRepository;
 import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
-import com.cupfeedeal.global.exception.ApplicationException;
-import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,8 @@ public class UserSubscriptionService {
     private CustomUserDetailService customUserDetailService;
     @Autowired
     private CafeSubscriptionTypeService cafeSubscriptionTypeService;
+    @Autowired
+    private UserCupcatSer userCupcatService;
 
     public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
@@ -68,5 +73,14 @@ public class UserSubscriptionService {
         // user subscription 저장
         final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType);
         userSubscriptionRepository.save(userSubscription);
+
+
+        // user cupcat 생성
+        // 현재 cupcat 정보 확인
+        UserCupcat userCupcat = userCupcatService.findUserCupcatByUser(user);
+        CupcatLevelEnum cupcatLevel = userCupcat.getCupcat().getCupcat_level();
+        CupcatTypeEnum cupcatType = userCupcat.getCupcat().getCupcat_type();
+
+
     }
 }
