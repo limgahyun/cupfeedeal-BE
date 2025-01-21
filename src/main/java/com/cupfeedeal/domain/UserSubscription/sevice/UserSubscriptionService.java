@@ -4,6 +4,8 @@ import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
+import com.cupfeedeal.domain.Cupcat.repository.CupcatRepository;
+import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
 import com.cupfeedeal.domain.Cupcat.service.UserCupcatService;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
@@ -20,11 +22,14 @@ import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeSe
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserSubscriptionService {
     @Autowired
@@ -34,11 +39,15 @@ public class UserSubscriptionService {
     @Autowired
     private final CafeRepository cafeRepository;
     @Autowired
-    private CustomUserDetailService customUserDetailService;
+    private final CustomUserDetailService customUserDetailService;
     @Autowired
-    private CafeSubscriptionTypeService cafeSubscriptionTypeService;
+    private final CafeSubscriptionTypeService cafeSubscriptionTypeService;
     @Autowired
-    private UserCupcatService userCupcatService;
+    private final UserCupcatService userCupcatService;
+    @Autowired
+    private final CupcatRepository cupcatRepository;
+    @Autowired
+    private final UserCupcatRepository userCupcatRepository;
 
     public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
@@ -66,6 +75,7 @@ public class UserSubscriptionService {
         return responseList;
     }
 
+    @Transactional
     public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
@@ -74,13 +84,28 @@ public class UserSubscriptionService {
         final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType);
         userSubscriptionRepository.save(userSubscription);
 
+        Integer newCupcatLevel;
+        CupcatTypeEnum cupcatType;
 
         // user cupcat 생성
         // 현재 cupcat 정보 확인
-        UserCupcat userCupcat = userCupcatService.findUserCupcatByUser(user);
-        CupcatLevelEnum cupcatLevel = userCupcat.getCupcat().getCupcat_level();
-        CupcatTypeEnum cupcatType = userCupcat.getCupcat().getCupcat_type();
+        Optional<UserCupcat> present_userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
 
+        if (present_userCupcat.isPresent()) {
+            UserCupcat currentCupcat = present_userCupcat.get();
 
+            Integer cupcatLevel = currentCupcat.getCupcat().getLevel();
+            cupcatType = currentCupcat.getCupcat().getType();
+
+            // level + 1
+            newCupcatLevel = cupcatLevel + 1;
+        } else {
+            newCupcatLevel = 0;
+            cupcatType = CupcatTypeEnum.A;
+        }
+
+        // new cupcat 생성
+        Cupcat newCupcat = cupcatRepository.findByLevelAndType(newCupcatLevel, cupcatType);
+        userCupcatService.createUserCupcat(user, newCupcat);
     }
 }

@@ -13,6 +13,5 @@ public interface UserCupcatRepository extends JpaRepository<UserCupcat, Long> {
     Optional<UserCupcat> findByUser(User user);
     Optional<UserCupcat> findByCupcat(Cupcat cupcat);
 
-    // bug: No property 'and' found for type 'User'; Traversed path: UserCupcat.user
-    Optional<UserCupcat> findTop1ByUserAndOrderByCreatedAtAsc(User user);
+    Optional<UserCupcat> findTop1ByUserOrderByCreatedAtAsc(User user);
 }

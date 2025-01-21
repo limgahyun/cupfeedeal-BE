@@ -1,5 +1,6 @@
 package com.cupfeedeal.domain.Cupcat.service;
 
+import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
 import com.cupfeedeal.domain.User.entity.User;
@@ -11,10 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserCupcatService {
-    private UserCupcatRepository userCupcatRepository;
+    private  final UserCupcatRepository userCupcatRepository;
 
     public UserCupcat findUserCupcatByUser(User user) {
-        return userCupcatRepository.findTop1ByUserAndOrderByCreatedAtAsc(user)
+        return userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
                 .orElse(null);
+    }
+
+    @Transactional
+    public void createUserCupcat(User user, Cupcat cupcat) {
+        UserCupcat userCupcat = UserCupcat.builder()
+                .user(user)
+                .cupcat(cupcat)
+                .build();
+        userCupcatRepository.save(userCupcat);
     }
 }
