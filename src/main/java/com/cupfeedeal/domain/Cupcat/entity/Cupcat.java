@@ -1,12 +1,9 @@
 package com.cupfeedeal.domain.Cupcat.entity;
 
-import com.cupfeedeal.global.BaseEntity;
+import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
-import com.cupfeedeal.domain.Cupcat.entity.CupcatLevelEnum;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
 
 @Entity
 @NoArgsConstructor

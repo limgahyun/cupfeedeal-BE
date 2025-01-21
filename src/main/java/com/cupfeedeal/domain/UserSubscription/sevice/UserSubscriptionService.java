@@ -38,7 +38,7 @@ public class UserSubscriptionService {
     @Autowired
     private CafeSubscriptionTypeService cafeSubscriptionTypeService;
     @Autowired
-    private UserCupcatSer userCupcatService;
+    private UserCupcatService userCupcatService;
 
     public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
