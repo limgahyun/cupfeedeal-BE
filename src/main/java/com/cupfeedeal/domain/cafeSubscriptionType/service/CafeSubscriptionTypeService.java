@@ -65,4 +65,15 @@ public class CafeSubscriptionTypeService {
 
         return breakDays;
     }
+
+
+    public void setSubscriptionBreakDays(CafeSubscriptionType cafeSubscriptionType) {
+        // breakDays 값이 비어있는 경우
+        if (cafeSubscriptionType.getBreakDays() == null || cafeSubscriptionType.getBreakDays().isEmpty()) {
+            List<Integer> calculatedBreakDays = calculateSavedCups(cafeSubscriptionType);
+            cafeSubscriptionType.setBreakDays(calculatedBreakDays);
+
+            cafeSubscriptionTypeRepository.save(cafeSubscriptionType);
+        }
+    }
 }

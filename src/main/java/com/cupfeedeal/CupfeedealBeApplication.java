@@ -13,5 +13,5 @@ public class CupfeedealBeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CupfeedealBeApplication.class, args);
 	}
-
+	
 }

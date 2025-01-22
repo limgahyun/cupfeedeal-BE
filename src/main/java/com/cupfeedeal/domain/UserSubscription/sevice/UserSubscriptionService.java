@@ -25,8 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,16 +127,24 @@ public class UserSubscriptionService {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
-        Double saved_cups = 0.5;
-        Integer remaining_days = 1;
+        Double saved_cups = getSavedCups(cafeSubscriptionType);
+        Integer remaining_days = getRemainingDays(userSubscription);
 
         return UserSubscriptionListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, saved_cups, remaining_days);
     }
 
-    public Double getSavedCupsCount(UserSubscription userSubscription) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
+    public Integer getRemainingDays(UserSubscription userSubscription) {
+        LocalDate currentDateTime = LocalDate.now();
+        LocalDate subscriptionDeadline = userSubscription.getSubscriptionDeadline().toLocalDate();
 
+        Integer remaining_days = (int) ChronoUnit.DAYS.between(currentDateTime, subscriptionDeadline);
 
+        return remaining_days;
+    }
 
+    public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType) {
+        cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionType);
+
+        return 0.5;
     }
 }
