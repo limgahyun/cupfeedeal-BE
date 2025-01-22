@@ -1,7 +1,6 @@
 package com.cupfeedeal.domain.UserSubscription.sevice;
 
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
-import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import com.cupfeedeal.domain.Cupcat.repository.CupcatRepository;
@@ -24,15 +23,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -142,7 +141,10 @@ public class UserSubscriptionService {
         return remaining_days;
     }
 
+    @Transactional
     public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType) {
+        log.debug("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
+
         cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionType);
 
         return 0.5;
