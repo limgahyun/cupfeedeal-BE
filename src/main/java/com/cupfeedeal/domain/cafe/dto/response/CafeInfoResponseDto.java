@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.cafe.dto.response;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafeImage.dto.response.CafeImageResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record CafeInfoResponseDto (
@@ -11,6 +12,8 @@ public record CafeInfoResponseDto (
         String address,
         String address_lat,
         String address_lng,
+        String menu,
+        List<Integer> periods,
         List<CafeImageResponseDto> images,
         String operation_time,
         String phone_num,
@@ -29,6 +32,8 @@ public record CafeInfoResponseDto (
                 cafe.getAddress(),
                 cafe.getAddressLat(),
                 cafe.getAddressLng(),
+                "아이스 아메리카노",
+                List.of(2, 4),
                 images,
                 cafe.getOperationTime(),
                 cafe.getPhoneNumber(),
