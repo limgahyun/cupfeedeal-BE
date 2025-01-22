@@ -3,16 +3,14 @@ package com.cupfeedeal.domain.UserSubscription.controller;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
 import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +39,14 @@ public class UserSubscriptionController {
     ){
         List<UserSubscriptionListResponseDto> userSubscriptions = userSubscriptionService.getUserSubscriptions(customUserdetails);
         return new CommonResponse<>(userSubscriptions, "user subscription list 조회에 성공하였습니다");
+    }
+
+    @Operation(summary = "user subscription 사용")
+    @PatchMapping("/{userSubscriptionId}")
+    public CommonResponse<UserSubscriptionUseResponseDto> useUserSubscription(
+            @PathVariable Long userSubscriptionId
+    ) {
+        UserSubscriptionUseResponseDto responseDto = userSubscriptionService.useSubscription(userSubscriptionId);
+        return new CommonResponse<>(responseDto, "user subscription 사용에 성공하였습니다.");
     }
 }

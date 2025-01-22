@@ -31,10 +31,13 @@ public enum ExceptionCode {
 
     // 5000: Subscription error
     NOT_FOUND_SUBSCRIPTION(HttpStatus.NOT_FOUND, 5000, "구독권을 찾을 수 없습니다."),
-    NOT_FOUND_CAFE_SUBSCRIPTION_TYPE(HttpStatus.NOT_FOUND, 5001, "구독권을 찾을 수 없습니다.");
+    NOT_FOUND_CAFE_SUBSCRIPTION_TYPE(HttpStatus.NOT_FOUND, 5001, "카페에 해당 구독권을 찾을 수 없습니다."),
 
 
-    // 6000:
+    // 6000: user subscription error
+    NOT_FOUND_USER_SUBSCRIPTION(HttpStatus.NOT_FOUND, 6000, "구독 중인 해당 구독권을 찾을 수 없습니다."),
+    ALREADY_USED_SUBSCRIPTION(HttpStatus.BAD_REQUEST, 6001, "해당 구독권을 이미 사용하였습니다."),
+    ALREADY_EXPIRED_SUBSCRIPTION(HttpStatus.BAD_REQUEST, 6002, "만료된 구독권입니다.");
 
     //7000: [임의] Error
 
