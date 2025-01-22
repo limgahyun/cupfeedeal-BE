@@ -1,7 +1,6 @@
 package com.cupfeedeal.domain.UserSubscription.dto.response;
 
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
-import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 
@@ -14,14 +13,14 @@ public record UserSubscriptionListResponseDto (
         String menu,
         String cafe_subscription_name,
         Integer period,
-        Float saved_cups,
+        Double saved_cups,
         Boolean is_used,
         Integer visit,
         LocalDateTime start,
         LocalDateTime end,
         Integer remaining_days
 ){
-    public static UserSubscriptionListResponseDto from(UserSubscription userSubscription, Cafe cafe, CafeSubscriptionType cafeSubscriptionType, Float saved_cups, Integer remaining_days) {
+    public static UserSubscriptionListResponseDto from(UserSubscription userSubscription, Cafe cafe, CafeSubscriptionType cafeSubscriptionType, Double saved_cups, Integer remaining_days) {
         return new UserSubscriptionListResponseDto(
                 userSubscription.getUserSubscriptionId(),
                 cafe.getId(),

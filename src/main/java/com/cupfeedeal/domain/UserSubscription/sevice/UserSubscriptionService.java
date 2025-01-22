@@ -12,6 +12,7 @@ import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -109,5 +111,29 @@ public class UserSubscriptionService {
         userCupcatService.createUserCupcat(user, newCupcat);
     }
 
+    public List<UserSubscriptionListResponseDto> getUserSubscriptions(CustomUserdetails customUserdetails) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
+        return userSubscriptions.stream()
+                .map(userSubscription -> convertToResponseDto(userSubscription))
+                .toList();
+    }
+
+    public UserSubscriptionListResponseDto convertToResponseDto(UserSubscription userSubscription) {
+
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+        Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
+        Double saved_cups = 0.5;
+        Integer remaining_days = 1;
+
+        return UserSubscriptionListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, saved_cups, remaining_days);
+    }
+
+    public Double getSavedCupsCount(UserSubscription userSubscription) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+    }
 }
