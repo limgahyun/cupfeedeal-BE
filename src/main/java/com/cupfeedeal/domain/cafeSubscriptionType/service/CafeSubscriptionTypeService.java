@@ -53,15 +53,15 @@ public class CafeSubscriptionTypeService {
     }
 
     @Transactional
-    public void setSubscriptionBreakDays(CafeSubscriptionType cafeSubscriptionType) {
-        // breakDays 값이 비어있는 경우
-        if (cafeSubscriptionType.getBreakDays() == null || cafeSubscriptionType.getBreakDays().isEmpty()) {
-            log.info("start");
-            List<Integer> calculatedBreakDays = calculateSavedCups(cafeSubscriptionType);
-            log.info("calculatedBreakDays : {}", calculatedBreakDays);
-            cafeSubscriptionType.setBreakDays(new ArrayList<>(calculatedBreakDays));
+    public void setSubscriptionBreakDays(Long cafeSubscriptionTypeId) {
+        CafeSubscriptionType cafeSubscriptionType = findCafeSubscriptionTypeById(cafeSubscriptionTypeId);
 
-            cafeSubscriptionTypeRepository.save(cafeSubscriptionType);
-        }
+        // breakDays 값이 비어있는 경우
+        log.info("start");
+        List<Integer> calculatedBreakDays = calculateSavedCups(cafeSubscriptionType);
+        log.info("calculatedBreakDays : {}", calculatedBreakDays);
+        cafeSubscriptionType.setBreakDays(new ArrayList<>(calculatedBreakDays));
+
+        cafeSubscriptionTypeRepository.save(cafeSubscriptionType);
     }
 }

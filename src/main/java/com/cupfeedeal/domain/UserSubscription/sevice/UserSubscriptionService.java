@@ -139,8 +139,10 @@ public class UserSubscriptionService {
     public UserSubscriptionListResponseDto convertToListResponseDto(UserSubscription userSubscription) {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+        Long cafeSubscriptionTypeId = cafeSubscriptionType.getId();
+
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
-        Double saved_cups = getSavedCups(cafeSubscriptionType);
+        Double saved_cups = getSavedCups(cafeSubscriptionTypeId);
         Integer remaining_days = getRemainingDays(userSubscription);
 
         return UserSubscriptionListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, saved_cups, remaining_days);
@@ -156,10 +158,10 @@ public class UserSubscriptionService {
     }
 
     @Transactional
-    public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType) {
-        log.info("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
+    public Double getSavedCups(Long cafeSubscriptionTypeId) {
+//        log.info("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
 
-        cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionType);
+        cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionTypeId);
 
         return 0.5;
     }

@@ -10,7 +10,6 @@ import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto
 import com.cupfeedeal.domain.cafe.service.CafeService;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.request.CafeSubscriptionTypeInfoRequestDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
-import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +26,6 @@ import java.util.List;
 public class CafeController {
 
     private final CafeService cafeService;
-    private final CafeSubscriptionTypeService cafeSubscriptionTypeService;
     private final UserSubscriptionService userSubscriptionService;
 
     @Operation(summary = "cafe 생성")
