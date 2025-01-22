@@ -87,6 +87,9 @@ public class UserSubscriptionService {
         return responseList;
     }
 
+    /*
+    user subscription 생성
+     */
     @Transactional
     public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
@@ -127,6 +130,9 @@ public class UserSubscriptionService {
         userCupcatService.createUserCupcat(user, newCupcat);
     }
 
+    /*
+    현재 구독중인 userSubscription list 조회
+     */
     public List<UserSubscriptionListResponseDto> getUserSubscriptions(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
@@ -136,6 +142,9 @@ public class UserSubscriptionService {
                 .toList();
     }
 
+    /*
+    userSubscription 정보를 UserSubscriptionListResponseDto로 변환
+     */
     public UserSubscriptionListResponseDto convertToListResponseDto(UserSubscription userSubscription) {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
@@ -148,6 +157,9 @@ public class UserSubscriptionService {
         return UserSubscriptionListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, saved_cups, remaining_days);
     }
 
+    /*
+    남은 구독 사용 가능 일수 계산
+     */
     public Integer getRemainingDays(UserSubscription userSubscription) {
         LocalDate currentDateTime = LocalDate.now();
         LocalDate subscriptionDeadline = userSubscription.getSubscriptionDeadline().toLocalDate();
@@ -157,6 +169,9 @@ public class UserSubscriptionService {
         return remaining_days;
     }
 
+    /*
+    아낀 잔 수 계산
+     */
     @Transactional
     public Double getSavedCups(Long cafeSubscriptionTypeId) {
 //        log.info("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
@@ -166,9 +181,13 @@ public class UserSubscriptionService {
         return 0.5;
     }
 
+    /*
+    구독권 사용 (isUsed update)
+     */
     @Transactional
     public UserSubscriptionUseResponseDto useSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
 
         // 이미 사용했거나, 만료된 구독권에 대한 예외처리
         if (userSubscription.getIsUsed() && userSubscription.getSubscriptionStatus() == SubscriptionStatus.VALID) {
@@ -185,12 +204,16 @@ public class UserSubscriptionService {
 
         userSubscriptionRepository.save(userSubscription);
 
-        // is_getting paw 여부 확인 - 수정 필요
-        Boolean is_getting_paw = false;
+        // is_getting paw 여부 확인
+        Boolean isGettingPaw = !cafeSubscriptionType.getBreakDays().isEmpty()
+                && cafeSubscriptionType.getBreakDays().get(0).equals(userSubscription.getUsingCount());
 
-        return UserSubscriptionUseResponseDto.from(is_getting_paw);
+        return UserSubscriptionUseResponseDto.from(isGettingPaw);
     }
 
+    /*
+    모든 userSubscription list 조회 (만료 포함)
+     */
     public List<UserSubscriptionManageListResponseDto> getAllUserSubscriptions(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
         List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
@@ -200,6 +223,9 @@ public class UserSubscriptionService {
                 .toList();
     }
 
+    /*
+    userSubscription 정보를 UserSubscriptionManageListResponseDto로 변환
+     */
     public UserSubscriptionManageListResponseDto convertToManageListResponseDto(UserSubscription userSubscription) {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
@@ -208,6 +234,9 @@ public class UserSubscriptionService {
         return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType);
     }
 
+    /*
+    cafe의 cafeSubscriptionType info 조회
+     */
     public CafeSubscriptionInfoResponseDto getCafeSubscriptionType(CustomUserdetails customUserdetails, CafeSubscriptionTypeInfoRequestDto cafeSubscriptionTypeInfo) {
         Long id = cafeSubscriptionTypeInfo.id();
         Boolean isExtension = cafeSubscriptionTypeInfo.isExtension();
