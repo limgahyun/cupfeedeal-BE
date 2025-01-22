@@ -17,6 +17,10 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
 
     @Query("SELECT us FROM UserSubscription us WHERE us.user = :user AND us.subscriptionStatus = :status")
     List<UserSubscription> findByUserAndSubscriptionStatusIsValid(@Param("user") User user, @Param("status") SubscriptionStatus status);
+
+    @Query("SELECT count(us) FROM UserSubscription us WHERE us.user = :user AND us.subscriptionStatus = :status")
+    Integer countAllByUser(@Param("user")User user, @Param("status") SubscriptionStatus status);
+
     //List<UserSubscription> findByUserId(Long userId);
     List<UserSubscription> findByUser_UserId(Long userId);
 
