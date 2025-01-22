@@ -7,6 +7,8 @@ import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionI
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionListResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTypeRepository;
+import com.cupfeedeal.global.exception.ApplicationException;
+import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,11 @@ import java.util.List;
 public class CafeSubscriptionTypeService {
     private final CafeService cafeService;
     private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
+
+    public CafeSubscriptionType findCafeSubscriptionTypeById(Long cafeSubscriptionTypeId) {
+        return cafeSubscriptionTypeRepository.findById(cafeSubscriptionTypeId)
+                .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE_SUBSCRIPTION_TYPE));
+    }
 
     public CafeSubscriptionInfoResponseDto getCafeSubscriptionType(Long cafe_id) {
         Cafe cafe = cafeService.findCafeById(cafe_id);

@@ -1,6 +1,7 @@
 package com.cupfeedeal.domain.User.service;
 
 import com.cupfeedeal.domain.Auth.security.JwtTokenProvider;
+import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
 import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
@@ -33,7 +34,7 @@ public class UserService {
 
         User user = customUserdetails.getUser();
 
-        Optional<UserCupcat> userCupcat = userCupcatRepository.findByUser(user);
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
         String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);
@@ -49,5 +50,12 @@ public class UserService {
         UserInfoUpdateResponseDto userInfoUpdateResponseDto = new UserInfoUpdateResponseDto(newUsername);
 
         return userInfoUpdateResponseDto;
+    }
+
+    public void createUserCupcat(User user, Cupcat cupcat) {
+        UserCupcat.builder()
+                .user(user)
+                .cupcat(cupcat)
+                .build();
     }
 }

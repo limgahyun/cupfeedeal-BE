@@ -30,7 +30,8 @@ public enum ExceptionCode {
     ALREADY_EXIST_LIKE(HttpStatus.NOT_FOUND,4002, "이미 해당 좋아요가 있습니다."),
 
     // 5000: Subscription error
-    NOT_FOUND_SUBSCRIPTION(HttpStatus.NOT_FOUND, 5000, "구독권을 찾을 수 없습니다.");
+    NOT_FOUND_SUBSCRIPTION(HttpStatus.NOT_FOUND, 5000, "구독권을 찾을 수 없습니다."),
+    NOT_FOUND_CAFE_SUBSCRIPTION_TYPE(HttpStatus.NOT_FOUND, 5001, "구독권을 찾을 수 없습니다.");
 
 
     // 6000:

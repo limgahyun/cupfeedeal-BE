@@ -38,7 +38,8 @@ public class CafeSubscriptionType extends BaseEntity {
 
 
     @Builder
-    public CafeSubscriptionType(String name, Integer period, Integer price, Float discount_percentage, Integer original_drink_price) {
+    public CafeSubscriptionType(Cafe cafe, String name, Integer period, Integer price, Float discount_percentage, Integer original_drink_price) {
+        this.cafe = cafe;
         this.name = name;
         this.period = period;
         this.price = price;
