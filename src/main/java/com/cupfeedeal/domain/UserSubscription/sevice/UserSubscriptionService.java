@@ -143,7 +143,7 @@ public class UserSubscriptionService {
 
     @Transactional
     public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType) {
-        log.debug("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
+        log.info("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
 
         cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionType);
 
