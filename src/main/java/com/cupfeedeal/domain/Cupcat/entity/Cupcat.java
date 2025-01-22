@@ -26,7 +26,9 @@ public class Cupcat{
     @Column(name = "cupcat_type")
     private CupcatTypeEnum type;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
-
 }
