@@ -104,8 +104,10 @@ public class UserSubscriptionService {
             cupcatType = CupcatTypeEnum.A;
         }
 
-        // new cupcat 생성
+        // new userCupcat 생성
         Cupcat newCupcat = cupcatRepository.findByLevelAndType(newCupcatLevel, cupcatType);
         userCupcatService.createUserCupcat(user, newCupcat);
     }
+
+
 }
