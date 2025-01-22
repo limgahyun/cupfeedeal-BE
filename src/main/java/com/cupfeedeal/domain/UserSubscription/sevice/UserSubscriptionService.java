@@ -12,6 +12,7 @@ import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
@@ -24,7 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,8 +109,42 @@ public class UserSubscriptionService {
             cupcatType = CupcatTypeEnum.A;
         }
 
-        // new cupcat 생성
+        // new userCupcat 생성
         Cupcat newCupcat = cupcatRepository.findByLevelAndType(newCupcatLevel, cupcatType);
         userCupcatService.createUserCupcat(user, newCupcat);
+    }
+
+    public List<UserSubscriptionListResponseDto> getUserSubscriptions(CustomUserdetails customUserdetails) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
+        return userSubscriptions.stream()
+                .map(userSubscription -> convertToResponseDto(userSubscription))
+                .toList();
+    }
+
+    public UserSubscriptionListResponseDto convertToResponseDto(UserSubscription userSubscription) {
+
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+        Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
+        Double saved_cups = getSavedCups(cafeSubscriptionType);
+        Integer remaining_days = getRemainingDays(userSubscription);
+
+        return UserSubscriptionListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, saved_cups, remaining_days);
+    }
+
+    public Integer getRemainingDays(UserSubscription userSubscription) {
+        LocalDate currentDateTime = LocalDate.now();
+        LocalDate subscriptionDeadline = userSubscription.getSubscriptionDeadline().toLocalDate();
+
+        Integer remaining_days = (int) ChronoUnit.DAYS.between(currentDateTime, subscriptionDeadline);
+
+        return remaining_days;
+    }
+
+    public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType) {
+        cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionType);
+
+        return 0.5;
     }
 }
