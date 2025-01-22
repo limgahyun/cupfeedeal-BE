@@ -35,9 +35,19 @@ public class User implements UserDetails {
     @Column(name = "user_level")
     private Integer user_level; // 0, 1, 2, 3, 4, 5 중 하나
 
+    @Column(name = "paw_count")
+    private Integer pawCount = 0; // 0, 1, 2, 3 중 하나
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (pawCount == null) {
+            pawCount = 0;
+        }
     }
 
     @Override
