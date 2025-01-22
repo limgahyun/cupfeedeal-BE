@@ -9,12 +9,10 @@ import com.cupfeedeal.domain.Cupcat.service.UserCupcatService;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
+import com.cupfeedeal.domain.User.repository.UserRepository;
 import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionInfoResponseDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionManageListResponseDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.*;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
@@ -53,6 +51,7 @@ public class UserSubscriptionService {
     private final UserCupcatRepository userCupcatRepository;
     private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
     private final CafeService cafeService;
+    private final UserRepository userRepository;
 
     public UserSubscription findUserSubscriptionById(Long userSubscriptionId) {
         return userSubscriptionRepository.findById(userSubscriptionId)
@@ -91,6 +90,10 @@ public class UserSubscriptionService {
     @Transactional
     public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+
+        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID) == 3){
+            throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
+        }
 
         CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
 
@@ -131,13 +134,17 @@ public class UserSubscriptionService {
     /*
     현재 구독중인 userSubscription list 조회
      */
-    public List<UserSubscriptionListResponseDto> getUserSubscriptions(CustomUserdetails customUserdetails) {
+    public UserSubscriptionValidListResponseDto getUserSubscriptions(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
         List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID);
-        return userSubscriptions.stream()
+        List<UserSubscriptionListResponseDto> userSubscriptionList =  userSubscriptions.stream()
                 .map(userSubscription -> convertToListResponseDto(userSubscription))
                 .toList();
+
+        Integer paw_count = user.getPawCount();
+
+        return UserSubscriptionValidListResponseDto.from(paw_count, userSubscriptionList);
     }
 
     /*
@@ -192,6 +199,7 @@ public class UserSubscriptionService {
     @Transactional
     public UserSubscriptionUseResponseDto useSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
+        User user = userSubscription.getUser();
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
 
         // 이미 사용했거나, 만료된 구독권에 대한 예외처리
@@ -209,9 +217,14 @@ public class UserSubscriptionService {
 
         userSubscriptionRepository.save(userSubscription);
 
-        // is_getting paw 여부 확인
+        // is_getting_paw 여부 확인
         Boolean isGettingPaw = !cafeSubscriptionType.getBreakDays().isEmpty()
                 && cafeSubscriptionType.getBreakDays().get(0).equals(userSubscription.getUsingCount());
+        // pawCount + 1
+        if (isGettingPaw) {
+            user.setPawCount(user.getPawCount() + 1);
+            userRepository.save(user);
+        }
 
         return UserSubscriptionUseResponseDto.from(isGettingPaw);
     }
@@ -292,5 +305,27 @@ public class UserSubscriptionService {
         }
 
         return CafeSubscriptionInfoResponseDto.from(cafe, userSubscriptionInfo, cafeSubscriptionListResponseDtoList);
+    }
+
+    /*
+    구독 취소
+     */
+    public void cancelSubscription(Long userSubscriptionId) {
+        UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
+        User user = userSubscription.getUser();
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+
+        // 상태 취소로 변경
+        userSubscription.setSubscriptionStatus(SubscriptionStatus.CANCELED);
+        userSubscriptionRepository.save(userSubscription);
+
+        // 해당 구독권으로 발자국이 찍힌 경우 발자국 count - 1
+        Boolean deletePaw = !cafeSubscriptionType.getBreakDays().isEmpty()
+                && cafeSubscriptionType.getBreakDays().get(0) <= (userSubscription.getUsingCount());
+
+        if (deletePaw) {
+            user.setPawCount(user.getPawCount() - 1);
+            userRepository.save(user);
+        }
     }
 }
