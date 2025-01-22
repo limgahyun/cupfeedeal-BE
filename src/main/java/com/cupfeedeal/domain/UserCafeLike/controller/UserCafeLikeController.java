@@ -6,7 +6,6 @@ import com.cupfeedeal.domain.UserCafeLike.dto.response.UserCafeLikeResponseDto;
 import com.cupfeedeal.domain.UserCafeLike.service.UserCafeLikeService;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

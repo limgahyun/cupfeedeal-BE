@@ -3,7 +3,6 @@ package com.cupfeedeal.domain.Cupcat.entity;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
-import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
 
 @Entity
 @NoArgsConstructor

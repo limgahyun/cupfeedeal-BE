@@ -1,17 +1,11 @@
 package com.cupfeedeal.domain.User.entity;
 
-import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
-import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
-import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 

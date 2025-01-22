@@ -1,6 +1,5 @@
 package com.cupfeedeal.domain.User.service;
 
-import com.cupfeedeal.domain.Auth.security.JwtTokenProvider;
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;

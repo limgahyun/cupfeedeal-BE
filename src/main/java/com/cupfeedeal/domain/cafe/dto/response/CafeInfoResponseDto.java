@@ -3,7 +3,6 @@ package com.cupfeedeal.domain.cafe.dto.response;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafeImage.dto.response.CafeImageResponseDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record CafeInfoResponseDto (
