@@ -3,7 +3,6 @@ package com.cupfeedeal.domain.UserSubscription.repository;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
-import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

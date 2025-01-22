@@ -1,6 +1,5 @@
 package com.cupfeedeal.global.common.argumentResolver;
 
-import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
 import com.cupfeedeal.global.common.annotation.Login;
 import org.springframework.core.MethodParameter;
