@@ -8,7 +8,7 @@ import java.util.List;
 public record CafeInfoResponseDto (
         Long id,
         String name,
-        String address_map,
+        String address,
         String address_lat,
         String address_lng,
         List<CafeImageResponseDto> images,
@@ -26,9 +26,9 @@ public record CafeInfoResponseDto (
         return new CafeInfoResponseDto(
                 cafe.getId(),
                 cafe.getName(),
+                cafe.getAddress(),
                 cafe.getAddressLat(),
                 cafe.getAddressLng(),
-                cafe.getAddress(),
                 images,
                 cafe.getOperationTime(),
                 cafe.getPhoneNumber(),

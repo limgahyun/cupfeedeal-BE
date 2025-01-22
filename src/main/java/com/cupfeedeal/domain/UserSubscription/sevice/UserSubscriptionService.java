@@ -12,6 +12,7 @@ import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionManageListResponseDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
@@ -125,13 +126,13 @@ public class UserSubscriptionService {
     public List<UserSubscriptionListResponseDto> getUserSubscriptions(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
-        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID);
         return userSubscriptions.stream()
-                .map(userSubscription -> convertToResponseDto(userSubscription))
+                .map(userSubscription -> convertToListResponseDto(userSubscription))
                 .toList();
     }
 
-    public UserSubscriptionListResponseDto convertToResponseDto(UserSubscription userSubscription) {
+    public UserSubscriptionListResponseDto convertToListResponseDto(UserSubscription userSubscription) {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
@@ -182,5 +183,22 @@ public class UserSubscriptionService {
         Boolean is_getting_paw = false;
 
         return UserSubscriptionUseResponseDto.from(is_getting_paw);
+    }
+
+    public List<UserSubscriptionManageListResponseDto> getAllUserSubscriptions(CustomUserdetails customUserdetails) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
+
+        return userSubscriptions.stream()
+                .map(userSubscription -> convertToManageListResponseDto(userSubscription))
+                .toList();
+    }
+
+    public UserSubscriptionManageListResponseDto convertToManageListResponseDto(UserSubscription userSubscription) {
+
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+        Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
+
+        return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType);
     }
 }
