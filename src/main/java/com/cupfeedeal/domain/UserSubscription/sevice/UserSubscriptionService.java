@@ -1,7 +1,6 @@
 package com.cupfeedeal.domain.UserSubscription.sevice;
 
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
-import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import com.cupfeedeal.domain.Cupcat.repository.CupcatRepository;
@@ -13,26 +12,30 @@ import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
+import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTypeRepository;
 import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
+import com.cupfeedeal.global.exception.ApplicationException;
+import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -53,6 +56,11 @@ public class UserSubscriptionService {
     private final CupcatRepository cupcatRepository;
     @Autowired
     private final UserCupcatRepository userCupcatRepository;
+
+    public UserSubscription findUserSubscriptionById(Long userSubscriptionId) {
+        return userSubscriptionRepository.findById(userSubscriptionId)
+                .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_USER_SUBSCRIPTION));
+    }
 
     public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
@@ -142,9 +150,37 @@ public class UserSubscriptionService {
         return remaining_days;
     }
 
+    @Transactional
     public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType) {
+        log.info("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
+
         cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionType);
 
         return 0.5;
+    }
+
+    @Transactional
+    public UserSubscriptionUseResponseDto useSubscription(Long userSubscriptionId) {
+        UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
+
+        // 이미 사용했거나, 만료된 구독권에 대한 예외처리
+        if (userSubscription.getIsUsed() && userSubscription.getSubscriptionStatus() == SubscriptionStatus.VALID) {
+            throw new ApplicationException(ExceptionCode.ALREADY_USED_SUBSCRIPTION);
+        } else if (userSubscription.getSubscriptionStatus() != SubscriptionStatus.VALID) {
+            throw new ApplicationException(ExceptionCode.ALREADY_EXPIRED_SUBSCRIPTION);
+        }
+
+        // isUsed = true
+        userSubscription.setIsUsed(true);
+
+        // usingCount + 1
+        userSubscription.setUsingCount(userSubscription.getUsingCount() + 1);
+
+        userSubscriptionRepository.save(userSubscription);
+
+        // is_getting paw 여부 확인 - 수정 필요
+        Boolean is_getting_paw = false;
+
+        return UserSubscriptionUseResponseDto.from(is_getting_paw);
     }
 }

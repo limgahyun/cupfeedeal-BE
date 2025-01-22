@@ -1,7 +1,6 @@
 package com.cupfeedeal.domain.cafeSubscriptionType.service;
 
 import com.cupfeedeal.domain.cafe.entity.Cafe;
-import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafe.service.CafeService;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionListResponseDto;
@@ -10,12 +9,14 @@ import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTyp
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -66,12 +67,14 @@ public class CafeSubscriptionTypeService {
         return breakDays;
     }
 
-
+    @Transactional
     public void setSubscriptionBreakDays(CafeSubscriptionType cafeSubscriptionType) {
         // breakDays 값이 비어있는 경우
         if (cafeSubscriptionType.getBreakDays() == null || cafeSubscriptionType.getBreakDays().isEmpty()) {
+            log.info("start");
             List<Integer> calculatedBreakDays = calculateSavedCups(cafeSubscriptionType);
-            cafeSubscriptionType.setBreakDays(calculatedBreakDays);
+            log.info("calculatedBreakDays : {}", calculatedBreakDays);
+            cafeSubscriptionType.setBreakDays(new ArrayList<>(calculatedBreakDays));
 
             cafeSubscriptionTypeRepository.save(cafeSubscriptionType);
         }
