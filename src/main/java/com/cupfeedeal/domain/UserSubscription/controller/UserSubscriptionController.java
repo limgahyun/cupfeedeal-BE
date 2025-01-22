@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.UserSubscription.controller;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionManageListResponseDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
 import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
 import com.cupfeedeal.global.common.response.CommonResponse;
@@ -48,5 +49,14 @@ public class UserSubscriptionController {
     ) {
         UserSubscriptionUseResponseDto responseDto = userSubscriptionService.useSubscription(userSubscriptionId);
         return new CommonResponse<>(responseDto, "user subscription 사용에 성공하였습니다.");
+    }
+
+    @Operation(summary = "모든 user subscription list 조회 (만료된 구독권 포함)")
+    @GetMapping("/manage")
+    public CommonResponse<List<UserSubscriptionManageListResponseDto>> getAllUserSubscriptions(
+            @AuthenticationPrincipal CustomUserdetails customUserdetails
+    ){
+        List<UserSubscriptionManageListResponseDto> allUserSubscriptions = userSubscriptionService.getAllUserSubscriptions(customUserdetails);
+        return new CommonResponse<>(allUserSubscriptions, "모든 user subscription list 조회에 성공하였습니다");
     }
 }
