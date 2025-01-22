@@ -1,12 +1,14 @@
 package com.cupfeedeal.domain.cafe.controller;
 
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
+import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeInfoResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeNewOpenListResponseDto;
 import com.cupfeedeal.domain.cafe.dto.response.CafeRecommendationListResponseDto;
 import com.cupfeedeal.domain.cafe.service.CafeService;
+import com.cupfeedeal.domain.cafeSubscriptionType.dto.request.CafeSubscriptionTypeInfoRequestDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
 import com.cupfeedeal.global.common.response.CommonResponse;
@@ -26,6 +28,7 @@ public class CafeController {
 
     private final CafeService cafeService;
     private final CafeSubscriptionTypeService cafeSubscriptionTypeService;
+    private final UserSubscriptionService userSubscriptionService;
 
     @Operation(summary = "cafe 생성")
     @PostMapping
@@ -67,9 +70,12 @@ public class CafeController {
     }
 
     @Operation(summary = "카페 구독권 조회")
-    @GetMapping("/{cafeId}/cafeSubscription/info")
-    public CommonResponse<CafeSubscriptionInfoResponseDto> getCafeSubscriptionInfo(@PathVariable Long cafeId) {
-        CafeSubscriptionInfoResponseDto cafeSubscriptionInfo = cafeSubscriptionTypeService.getCafeSubscriptionType(cafeId);
+    @GetMapping("/cafeSubscription/info")
+    public CommonResponse<CafeSubscriptionInfoResponseDto> getCafeSubscriptionInfo(
+            CafeSubscriptionTypeInfoRequestDto cafeSubscriptionTypeInfo,
+            @AuthenticationPrincipal CustomUserdetails customUserdetails
+    ) {
+        CafeSubscriptionInfoResponseDto cafeSubscriptionInfo = userSubscriptionService.getCafeSubscriptionType(customUserdetails, cafeSubscriptionTypeInfo);
         return new CommonResponse<>(cafeSubscriptionInfo, "해당 카페의 상세 정보 조회에 성공하였습니다.");
     }
 }

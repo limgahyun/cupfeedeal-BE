@@ -11,6 +11,7 @@ import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionInfoResponseDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionManageListResponseDto;
 import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
@@ -19,6 +20,10 @@ import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafe.repository.CafeRepository;
+import com.cupfeedeal.domain.cafe.service.CafeService;
+import com.cupfeedeal.domain.cafeSubscriptionType.dto.request.CafeSubscriptionTypeInfoRequestDto;
+import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
+import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionListResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTypeRepository;
 import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeService;
@@ -42,22 +47,14 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserSubscriptionService {
-    @Autowired
     private final UserSubscriptionRepository userSubscriptionRepository;
-    @Autowired
-    private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
-    @Autowired
-    private final CafeRepository cafeRepository;
-    @Autowired
     private final CustomUserDetailService customUserDetailService;
-    @Autowired
     private final CafeSubscriptionTypeService cafeSubscriptionTypeService;
-    @Autowired
     private final UserCupcatService userCupcatService;
-    @Autowired
     private final CupcatRepository cupcatRepository;
-    @Autowired
     private final UserCupcatRepository userCupcatRepository;
+    private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
+    private final CafeService cafeService;
 
     public UserSubscription findUserSubscriptionById(Long userSubscriptionId) {
         return userSubscriptionRepository.findById(userSubscriptionId)
@@ -207,5 +204,57 @@ public class UserSubscriptionService {
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
 
         return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType);
+    }
+
+    public CafeSubscriptionInfoResponseDto getCafeSubscriptionType(CustomUserdetails customUserdetails, CafeSubscriptionTypeInfoRequestDto cafeSubscriptionTypeInfo) {
+        Long id = cafeSubscriptionTypeInfo.id();
+        Boolean isExtension = cafeSubscriptionTypeInfo.isExtension();
+
+        if (!isExtension) {
+            return getCafeSubscriptionTypeWithoutExtension(id);
+        } else {
+            return getCafeSubscriptionTypeWithExtension(customUserdetails, id);
+        }
+    }
+
+    /*
+    구독중이 아닌 경우 cafeSubscriptionType 조회
+     */
+    public CafeSubscriptionInfoResponseDto getCafeSubscriptionTypeWithoutExtension(Long cafeId) {
+        Cafe cafe = cafeService.findCafeById(cafeId);
+        List<CafeSubscriptionType> cafeSubscriptionTypeList = cafeSubscriptionTypeRepository.findAllByCafeId(cafeId);
+
+        // cafeSubscriptionType list를 dto로 변환
+        List<CafeSubscriptionListResponseDto> cafeSubscriptionListResponseDtoList = cafeSubscriptionTypeList.stream()
+                .map(CafeSubscriptionListResponseDto::from)
+                .toList();
+
+        return CafeSubscriptionInfoResponseDto.from(cafe, null, cafeSubscriptionListResponseDtoList);
+    }
+
+    /*
+    구독중인 경우 cafeSubscriptionType 조회
+     */
+    public CafeSubscriptionInfoResponseDto getCafeSubscriptionTypeWithExtension(CustomUserdetails customUserdetails, Long userSubscriptionId) {
+        UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+        Cafe cafe = cafeSubscriptionType.getCafe();
+
+        List<CafeSubscriptionType> cafeSubscriptionTypeList = cafeSubscriptionTypeRepository.findAllByCafe(cafe);
+
+        // cafeSubscriptionType list를 dto로 변환
+        List<CafeSubscriptionListResponseDto> cafeSubscriptionListResponseDtoList = cafeSubscriptionTypeList.stream()
+                .map(CafeSubscriptionListResponseDto::from)
+                .toList();
+
+        // 구독권 정보를 dto로 변환
+        UserSubscriptionInfoResponseDto userSubscriptionInfo = UserSubscriptionInfoResponseDto.from(userSubscription, cafeSubscriptionType);
+
+        // 인증되지 않은 사용자 로직
+        if (customUserdetails == null) {
+            return CafeSubscriptionInfoResponseDto.from(cafe, null, cafeSubscriptionListResponseDtoList);
+        }
+
+        return CafeSubscriptionInfoResponseDto.from(cafe, userSubscriptionInfo, cafeSubscriptionListResponseDtoList);
     }
 }
