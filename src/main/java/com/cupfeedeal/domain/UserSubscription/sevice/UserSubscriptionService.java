@@ -19,7 +19,6 @@ import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.entity.Cafe;
-import com.cupfeedeal.domain.cafe.repository.CafeRepository;
 import com.cupfeedeal.domain.cafe.service.CafeService;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.request.CafeSubscriptionTypeInfoRequestDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
@@ -30,7 +29,6 @@ import com.cupfeedeal.domain.cafeSubscriptionType.service.CafeSubscriptionTypeSe
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -148,10 +146,11 @@ public class UserSubscriptionService {
     public UserSubscriptionListResponseDto convertToListResponseDto(UserSubscription userSubscription) {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
-        Long cafeSubscriptionTypeId = cafeSubscriptionType.getId();
 
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
-        Double saved_cups = getSavedCups(cafeSubscriptionTypeId);
+        Integer using_count = userSubscription.getUsingCount();
+
+        Double saved_cups = getSavedCups(cafeSubscriptionType, using_count);
         Integer remaining_days = getRemainingDays(userSubscription);
 
         return UserSubscriptionListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, saved_cups, remaining_days);
@@ -172,13 +171,19 @@ public class UserSubscriptionService {
     /*
     아낀 잔 수 계산
      */
-    @Transactional
-    public Double getSavedCups(Long cafeSubscriptionTypeId) {
-//        log.info("BreakDays value before check: {}", cafeSubscriptionType.getBreakDays());
+    public Double getSavedCups(CafeSubscriptionType cafeSubscriptionType, Integer using_count) {
+        List<Integer> breakDays = cafeSubscriptionType.getBreakDays();
 
-        cafeSubscriptionTypeService.setSubscriptionBreakDays(cafeSubscriptionTypeId);
+        for (int i = 0; i < breakDays.size(); i++) {
+            boolean withinRange = breakDays.get(i) <= using_count
+                    && ( i+1 == breakDays.size() || (breakDays.get(i+1) > using_count));
 
-        return 0.5;
+            if (withinRange) {
+                return (i+1) / 2.0;
+            }
+        }
+
+        return 0.0;
     }
 
     /*
