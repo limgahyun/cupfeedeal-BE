@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,8 +95,14 @@ public class UserSubscriptionService {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
         CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
+
+        // subscription deadline 계산
+        LocalDateTime subscriptionDeadline = requestDto.subscriptionStart()
+                .plusDays(cafeSubscriptionType.getPeriod())
+                .atTime(23, 59, 59);
+
         // user subscription 저장
-        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType);
+        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType, subscriptionDeadline);
         userSubscriptionRepository.save(userSubscription);
 
         Integer newCupcatLevel;
