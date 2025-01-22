@@ -1,14 +1,16 @@
 package com.cupfeedeal.domain.User.controller;
 
-import com.cupfeedeal.domain.Auth.security.JwtTokenProvider;
 import com.cupfeedeal.domain.User.dto.request.UserInfoUpdateRequestDto;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
 import com.cupfeedeal.domain.User.dto.response.UserInfoUpdateResponseDto;
+import com.cupfeedeal.domain.User.dto.response.UserMainInfoResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.service.UserService;
 import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
 import com.cupfeedeal.global.common.response.CommonResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "User", description = "user api")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -26,8 +29,8 @@ public class UserController {
     @Autowired
     private UserService userService;
     private final UserSubscriptionService userSubscriptionService;
-    private final JwtTokenProvider jwtTokenProvider;
 
+    @Operation(summary = "my page user 정보 조회")
     @GetMapping("")
     public CommonResponse<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
 //        if (customUserdetails == null) {
@@ -37,6 +40,7 @@ public class UserController {
         return new CommonResponse<> (userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.");
     }
 
+    @Operation(summary = "user nickname 변경")
     @PatchMapping("")
     public CommonResponse<UserInfoUpdateResponseDto> updateUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails, @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
         UserInfoUpdateResponseDto userInfoUpdateResponseDto = userService.updateUserInfo(customUserdetails, userInfoUpdateRequestDto.getUsername());
@@ -44,10 +48,17 @@ public class UserController {
         return new CommonResponse<>(userInfoUpdateResponseDto, "회원 정보를 성공적으로 수정했습니다.");
     }
 
+    @Operation(summary = "user 결제 내역 조회")
     @GetMapping("/payment")
     public CommonResponse<List<PaymentHistoryResponseDto>> getUserPaymentHistory(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
         List<PaymentHistoryResponseDto> paymentHistoryResponseDto = userSubscriptionService.getUserPaymentHistory(customUserdetails);
         return new CommonResponse<>(paymentHistoryResponseDto, "유저 결제 내역을 성공적으로 가져왔습니다.");
     }
 
+    @Operation(summary = "main page user 정보 조회")
+    @GetMapping("/main")
+    public CommonResponse<UserMainInfoResponseDto> getUserMainInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
+        UserMainInfoResponseDto userMainInfo = userService.getUserMainInfo(customUserdetails);
+        return new CommonResponse<> (userMainInfo, "회원 정보를 성공적으로 조회했습니다.");
+    }
 }
