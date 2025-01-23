@@ -14,4 +14,5 @@ public class LoginResponseDto {
     private String token;
     private Boolean is_first;
     private Integer subscription_count;
+
 }
