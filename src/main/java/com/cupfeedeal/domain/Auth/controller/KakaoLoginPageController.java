@@ -16,8 +16,8 @@ public class KakaoLoginPageController {
     @Value("${spring.kakao.client_id}")
     private String client_id;
 
-    @Value("${spring.kakao.redirect_uri}")
-    private String redirect_uri;
+//    @Value("${spring.kakao.redirect_uri}")
+    private String redirect_uri = "https://api.cupfeedeal.xyz/api/v1/auth/callback";
 
     @GetMapping("/page")
     public String loginPage(Model model) {
