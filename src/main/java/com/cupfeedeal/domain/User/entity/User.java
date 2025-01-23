@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.User.entity;
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
+import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +24,7 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(of="userId")
 @Table(name="user")
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +39,7 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = true, length = 100)
     private String email;
 
-    @Column(name = "user_level")
+    @Column(name = "user_level", columnDefinition = "Integer default 0")
     private Integer user_level; // 0, 1, 2, 3, 4, 5 중 하나
 
     @Override
