@@ -1,43 +1,29 @@
 package com.cupfeedeal.domain.cafeSubscriptionType.service;
 
-import com.cupfeedeal.domain.cafe.entity.Cafe;
-import com.cupfeedeal.domain.cafe.repository.CafeRepository;
+import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
 import com.cupfeedeal.domain.cafe.service.CafeService;
-import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionInfoResponseDto;
-import com.cupfeedeal.domain.cafeSubscriptionType.dto.response.CafeSubscriptionListResponseDto;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.domain.cafeSubscriptionType.repository.CafeSubscriptionTypeRepository;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CafeSubscriptionTypeService {
-    private final CafeService cafeService;
     private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
 
     public CafeSubscriptionType findCafeSubscriptionTypeById(Long cafeSubscriptionTypeId) {
         return cafeSubscriptionTypeRepository.findById(cafeSubscriptionTypeId)
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.NOT_FOUND_CAFE_SUBSCRIPTION_TYPE));
-    }
-
-    public CafeSubscriptionInfoResponseDto getCafeSubscriptionType(Long cafe_id) {
-        Cafe cafe = cafeService.findCafeById(cafe_id);
-        List<CafeSubscriptionType> cafeSubscriptionTypeList = cafeSubscriptionTypeRepository.findAllByCafeId(cafe_id);
-
-        // cafeSubscriptionType list를 dto로 변환
-        List<CafeSubscriptionListResponseDto> cafeSubscriptionListResponseDtoList = cafeSubscriptionTypeList.stream()
-                .map(CafeSubscriptionListResponseDto::from)
-                .toList();
-
-        return CafeSubscriptionInfoResponseDto.from(cafe, cafeSubscriptionListResponseDtoList);
     }
 
     public List<Integer> calculateSavedCups(CafeSubscriptionType cafeSubscriptionType) {
@@ -66,14 +52,13 @@ public class CafeSubscriptionTypeService {
         return breakDays;
     }
 
+    @Transactional
+    public void setSubscriptionBreakDays(Long cafeSubscriptionTypeId) {
+        CafeSubscriptionType cafeSubscriptionType = findCafeSubscriptionTypeById(cafeSubscriptionTypeId);
 
-    public void setSubscriptionBreakDays(CafeSubscriptionType cafeSubscriptionType) {
-        // breakDays 값이 비어있는 경우
-        if (cafeSubscriptionType.getBreakDays() == null || cafeSubscriptionType.getBreakDays().isEmpty()) {
-            List<Integer> calculatedBreakDays = calculateSavedCups(cafeSubscriptionType);
-            cafeSubscriptionType.setBreakDays(calculatedBreakDays);
+        List<Integer> calculatedBreakDays = calculateSavedCups(cafeSubscriptionType);
+        cafeSubscriptionType.setBreakDays(new ArrayList<>(calculatedBreakDays));
 
-            cafeSubscriptionTypeRepository.save(cafeSubscriptionType);
-        }
+        cafeSubscriptionTypeRepository.save(cafeSubscriptionType);
     }
 }

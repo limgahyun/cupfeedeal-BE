@@ -10,6 +10,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class CafeSubscriptionType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,10 +47,6 @@ public class CafeSubscriptionType extends BaseEntity {
         this.price = price;
         this.discount_percentage = discount_percentage;
         this.original_drink_price = original_drink_price;
-        this.breakDays = breakDays;
-    }
-
-    public void setBreakDays(List<Integer> breakDays) {
         this.breakDays = breakDays;
     }
 }

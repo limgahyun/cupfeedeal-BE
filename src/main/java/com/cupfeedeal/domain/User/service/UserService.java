@@ -1,14 +1,15 @@
 package com.cupfeedeal.domain.User.service;
 
-import com.cupfeedeal.domain.Auth.security.JwtTokenProvider;
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
 import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
 import com.cupfeedeal.domain.User.dto.response.UserInfoUpdateResponseDto;
+import com.cupfeedeal.domain.User.dto.response.UserMainInfoResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
+import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
@@ -26,6 +27,8 @@ public class UserService {
     @Autowired
     private final UserCupcatRepository userCupcatRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
 
     public UserInfoResponseDto getUserInfo(CustomUserdetails customUserdetails) {
         if (customUserdetails == null || customUserdetails.getUser() == null) {
@@ -34,8 +37,7 @@ public class UserService {
 
         User user = customUserdetails.getUser();
 
-        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
-        String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
+        String cupcatImageUrl = getCupcatImgUrl(user);
 
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);
 
@@ -57,5 +59,23 @@ public class UserService {
                 .user(user)
                 .cupcat(cupcat)
                 .build();
+    }
+
+    public UserMainInfoResponseDto getUserMainInfo(CustomUserdetails customUserdetails) {
+        if (customUserdetails == null || customUserdetails.getUser() == null) {
+            return null;
+        }
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+        String cupcatImageUrl = getCupcatImgUrl(user);
+        Integer subscription_count = userSubscriptionRepository.countAllByUser(user, SubscriptionStatus.VALID);
+
+        return UserMainInfoResponseDto.from(user, subscription_count, cupcatImageUrl);
+    }
+
+    public String getCupcatImgUrl(User user) {
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
+        String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
+
+        return cupcatImageUrl;
     }
 }

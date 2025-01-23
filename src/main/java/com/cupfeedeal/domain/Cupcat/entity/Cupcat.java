@@ -3,7 +3,6 @@ package com.cupfeedeal.domain.Cupcat.entity;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
-import com.cupfeedeal.domain.Cupcat.enumerate.CupcatLevelEnum;
 
 @Entity
 @NoArgsConstructor
@@ -27,7 +26,9 @@ public class Cupcat{
     @Column(name = "cupcat_type")
     private CupcatTypeEnum type;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
-
 }

@@ -6,10 +6,7 @@ import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import com.cupfeedeal.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
-import java.security.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity

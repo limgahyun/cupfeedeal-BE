@@ -2,20 +2,16 @@ package com.cupfeedeal.domain.Auth.service;
 
 import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoTokenResponseDto;
 import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoUserInfoResponseDto;
-import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import io.netty.handler.codec.http.HttpHeaderValues;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
