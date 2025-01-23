@@ -29,4 +29,15 @@ public class AuthController {
 
         return new CommonResponse<>(loginResponseDto, "카카오 로그인에 성공했습니다.");
     }
+
+    @GetMapping("/callback/backend")
+    public CommonResponse<?> callbackBackend(@RequestParam("code") String code) throws IOException {
+        String accessToken = kakaoService.getAccessTokenFromKakao(code);
+
+        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
+
+        LoginResponseDto loginResponseDto = authService.login(userInfo);
+
+        return new CommonResponse<>(loginResponseDto, "카카오 로그인에 성공했습니다.");
+    }
 }
