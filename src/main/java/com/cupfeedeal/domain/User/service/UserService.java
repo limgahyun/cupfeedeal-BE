@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.User.service;
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
+import com.cupfeedeal.domain.User.dto.response.UserCupcatInfoResponseDto;
 import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
 import com.cupfeedeal.domain.User.dto.response.UserInfoUpdateResponseDto;
 import com.cupfeedeal.domain.User.dto.response.UserMainInfoResponseDto;
@@ -42,6 +43,18 @@ public class UserService {
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);
 
         return userInfoResponseDto;
+    }
+
+    public UserCupcatInfoResponseDto getUserCupcatInfo(CustomUserdetails customUserdetails) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+
+        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
+                .orElse(null);
+
+        // 수정 필요
+        String cafeName = "카페";
+
+        return UserCupcatInfoResponseDto.from(userCupcat, cafeName);
     }
 
     public UserInfoUpdateResponseDto updateUserInfo(CustomUserdetails customUserdetails, String newUsername) {
