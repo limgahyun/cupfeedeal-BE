@@ -310,6 +310,7 @@ public class UserSubscriptionService {
     /*
     구독 취소
      */
+    @Transactional
     public void cancelSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
         User user = userSubscription.getUser();

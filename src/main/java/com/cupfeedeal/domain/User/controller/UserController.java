@@ -1,10 +1,7 @@
 package com.cupfeedeal.domain.User.controller;
 
 import com.cupfeedeal.domain.User.dto.request.UserInfoUpdateRequestDto;
-import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
-import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
-import com.cupfeedeal.domain.User.dto.response.UserInfoUpdateResponseDto;
-import com.cupfeedeal.domain.User.dto.response.UserMainInfoResponseDto;
+import com.cupfeedeal.domain.User.dto.response.*;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.service.UserService;
 import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
@@ -39,6 +36,14 @@ public class UserController {
         UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(customUserdetails);
         return new CommonResponse<> (userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.");
     }
+
+    @Operation(summary = "my page user cupcat level 정보 조회")
+    @GetMapping("/cupcat")
+    public CommonResponse<UserCupcatInfoResponseDto> getUserCupcatInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
+        UserCupcatInfoResponseDto userCupcatInfo = userService.getUserCupcatInfo(customUserdetails);
+        return new CommonResponse<> (userCupcatInfo, "컵캣 레벨 정보를 성공적으로 조회했습니다.");
+    }
+
 
     @Operation(summary = "user nickname 변경")
     @PatchMapping("")
