@@ -30,9 +30,6 @@ public class UserController {
     @Operation(summary = "my page user 정보 조회")
     @GetMapping("")
     public CommonResponse<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
-//        if (customUserdetails == null) {
-//            throw new IllegalArgumentException("인증되지 않은 사용자입니다.");
-//        }
         UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(customUserdetails);
         return new CommonResponse<> (userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.");
     }

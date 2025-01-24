@@ -13,7 +13,7 @@ import java.util.Random;
 public class CupcatTypeUtilService {
     private static final Random RANDOM = new Random();
 
-    public static CupcatTypeEnum getRandomCupcatType() {
+    public CupcatTypeEnum getRandomCupcatType() {
         CupcatTypeEnum[] values = CupcatTypeEnum.values();
         int randomIndex = RANDOM.nextInt(values.length);
         return values[randomIndex];

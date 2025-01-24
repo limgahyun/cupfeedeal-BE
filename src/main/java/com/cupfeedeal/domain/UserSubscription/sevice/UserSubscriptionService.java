@@ -5,6 +5,7 @@ import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import com.cupfeedeal.domain.Cupcat.repository.CupcatRepository;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
+import com.cupfeedeal.domain.Cupcat.service.CupcatTypeUtilService;
 import com.cupfeedeal.domain.Cupcat.service.UserCupcatService;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
@@ -52,6 +53,7 @@ public class UserSubscriptionService {
     private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
     private final CafeService cafeService;
     private final UserRepository userRepository;
+    private final CupcatTypeUtilService cupcatTypeUtilService;
 
     public UserSubscription findUserSubscriptionById(Long userSubscriptionId) {
         return userSubscriptionRepository.findById(userSubscriptionId)
@@ -91,6 +93,10 @@ public class UserSubscriptionService {
     public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
+        // user level + 1
+        user.setUser_level(user.getUser_level() + 1);
+        userRepository.save(user);
+
         if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID) == 3){
             throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
         }
@@ -112,7 +118,7 @@ public class UserSubscriptionService {
 
         // user cupcat 생성
         // 현재 cupcat 정보 확인
-        Optional<UserCupcat> present_userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
+        Optional<UserCupcat> present_userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user);
 
         if (present_userCupcat.isPresent()) {
             UserCupcat currentCupcat = present_userCupcat.get();
@@ -122,9 +128,15 @@ public class UserSubscriptionService {
 
             // level + 1
             newCupcatLevel = cupcatLevel + 1;
+
+            // cupcat level이 이미 5인 경우
+            if (cupcatLevel == 6) {
+                newCupcatLevel = 1;
+                cupcatType = cupcatTypeUtilService.getRandomCupcatType();
+            }
         } else {
-            newCupcatLevel = 0;
-            cupcatType = CupcatTypeEnum.A;
+            newCupcatLevel = 1;
+            cupcatType = cupcatTypeUtilService.getRandomCupcatType();
         }
 
         // new userCupcat 생성

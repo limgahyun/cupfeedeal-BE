@@ -36,7 +36,7 @@ public class UserService {
         User user = customUserdetails.getUser();
 
         // userCupcat 조회
-        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
+        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user)
                 .orElse(null);
 
         return UserInfoResponseDto.from(user, userCupcat);
@@ -64,7 +64,7 @@ public class UserService {
     }
 
     public String getCupcatImgUrl(User user) {
-        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user);
         String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
         return cupcatImageUrl;

@@ -14,7 +14,7 @@ public interface UserCupcatRepository extends JpaRepository<UserCupcat, Long> {
     Optional<UserCupcat> findByUser(User user);
     Optional<UserCupcat> findByCupcat(Cupcat cupcat);
 
-    Optional<UserCupcat> findTop1ByUserOrderByCreatedAtAsc(User user);
+    Optional<UserCupcat> findTop1ByUserOrderByCreatedAtDesc(User user);
 
     List<UserCupcat> findAllByUserOrderByCreatedAtAsc(User user);
 }
