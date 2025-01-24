@@ -1,21 +1,17 @@
 package com.cupfeedeal.domain.User.dto.response;
 
-import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
+import com.cupfeedeal.domain.User.entity.User;
 
-import java.time.LocalDate;
+import java.util.List;
 
 public record UserCupcatInfoResponseDto (
-        String cafe_name,
-        LocalDate birth_date,
         Integer level,
-        String cupcat_img_url
+        List<CupcatInfoResponseDto> cupcats
 ){
-    public static UserCupcatInfoResponseDto from(UserCupcat userCupcat, String cafe_name) {
+    public static UserCupcatInfoResponseDto from(User user, List<CupcatInfoResponseDto> cupcats) {
         return new UserCupcatInfoResponseDto(
-                cafe_name,
-                userCupcat.getCreatedAt().toLocalDate(),
-                userCupcat.getUser().getUser_level(),
-                userCupcat.getCupcat().getImageUrl()
+                user.getUser_level(),
+                cupcats
         );
     }
 }

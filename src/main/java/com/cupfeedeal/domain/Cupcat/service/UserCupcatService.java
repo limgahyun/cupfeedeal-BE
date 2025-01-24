@@ -20,10 +20,11 @@ public class UserCupcatService {
     }
 
     @Transactional
-    public void createUserCupcat(User user, Cupcat cupcat) {
+    public void createUserCupcat(User user, Cupcat cupcat, String cafeName) {
         UserCupcat userCupcat = UserCupcat.builder()
                 .user(user)
                 .cupcat(cupcat)
+                .cafeName(cafeName)
                 .build();
         userCupcatRepository.save(userCupcat);
     }

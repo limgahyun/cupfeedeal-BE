@@ -96,6 +96,7 @@ public class UserSubscriptionService {
         }
 
         CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
+        Cafe cafe = cafeSubscriptionType.getCafe();
 
         // subscription deadline 계산
         LocalDateTime subscriptionDeadline = requestDto.subscriptionStart()
@@ -127,8 +128,10 @@ public class UserSubscriptionService {
         }
 
         // new userCupcat 생성
+        String cafeName = cafe.getName();
+
         Cupcat newCupcat = cupcatRepository.findByLevelAndType(newCupcatLevel, cupcatType);
-        userCupcatService.createUserCupcat(user, newCupcat);
+        userCupcatService.createUserCupcat(user, newCupcat, cafeName);
     }
 
     /*
