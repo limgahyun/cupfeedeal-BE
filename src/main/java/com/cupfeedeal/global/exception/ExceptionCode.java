@@ -39,7 +39,8 @@ public enum ExceptionCode {
     ALREADY_USED_SUBSCRIPTION(HttpStatus.BAD_REQUEST, 6001, "해당 구독권을 이미 사용하였습니다."),
     ALREADY_EXPIRED_SUBSCRIPTION(HttpStatus.BAD_REQUEST, 6002, "만료된 구독권입니다."),
     BEFORE_SUBSCRIPTION_START(HttpStatus.BAD_REQUEST, 6003, "구독권 사용기간 전입니다."),
-    ALREADY_FULL_SUBSCRIPTION(HttpStatus.BAD_REQUEST, 6004, "이미 구독권을 3개 가지고 있어, 더 이상 구독할 수 없습니다.");
+    ALREADY_FULL_SUBSCRIPTION(HttpStatus.BAD_REQUEST, 6004, "이미 구독권을 3개 가지고 있으므로 더 이상 구독할 수 없습니다."),
+    ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, 6005, "이미 구독 중인 구독권입니다.");
 
     //7000: [임의] Error
 

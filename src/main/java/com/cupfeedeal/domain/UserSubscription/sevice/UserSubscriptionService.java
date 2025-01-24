@@ -93,18 +93,20 @@ public class UserSubscriptionService {
     @Transactional
     public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+        CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
+        Cafe cafe = cafeSubscriptionType.getCafe();
+
+        // 구독 가능 여부 확인
+        List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
+        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3){
+            throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
+        } else if (userSubscriptionRepository.existsByUserAndCafeSubscriptionTypeAndStatus(user, cafeSubscriptionType, statuses)) {
+            throw new ApplicationException(ExceptionCode.ALREADY_SUBSCRIBED);
+        }
 
         // user level + 1
         user.setUser_level(user.getUser_level() + 1);
         userRepository.save(user);
-
-        List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
-        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3){
-            throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
-        }
-
-        CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
-        Cafe cafe = cafeSubscriptionType.getCafe();
 
         // subscription deadline 계산
         LocalDateTime subscriptionDeadline = requestDto.subscriptionStart()
