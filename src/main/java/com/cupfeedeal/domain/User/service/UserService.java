@@ -3,10 +3,7 @@ package com.cupfeedeal.domain.User.service;
 import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
-import com.cupfeedeal.domain.User.dto.response.UserCupcatInfoResponseDto;
-import com.cupfeedeal.domain.User.dto.response.UserInfoResponseDto;
-import com.cupfeedeal.domain.User.dto.response.UserInfoUpdateResponseDto;
-import com.cupfeedeal.domain.User.dto.response.UserMainInfoResponseDto;
+import com.cupfeedeal.domain.User.dto.response.*;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
@@ -19,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,29 +39,19 @@ public class UserService {
 
         User user = customUserdetails.getUser();
 
-        String cupcatImageUrl = getCupcatImgUrl(user);
+        // userCupcat 조회
+        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
+                .orElse(null);
 
-        // 유효한 데이터 넘기도록 수정 필요
-        String cafeName = "카페";
 
-        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
-        LocalDate birthDate = (userCupcat.isPresent()) ? userCupcat.get().getCreatedAt().toLocalDate() : null;
+        String cupcatImageUrl = getImgUrl(userCupcat);
+        String cafeName = userCupcat.getCafeName();
+
+        LocalDate birthDate = (userCupcat != null) ? userCupcat.getCreatedAt().toLocalDate() : null;
 
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl, cafeName, birthDate);
 
         return userInfoResponseDto;
-    }
-
-    public UserCupcatInfoResponseDto getUserCupcatInfo(CustomUserdetails customUserdetails) {
-        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
-
-        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
-                .orElse(null);
-
-        // 수정 필요
-        String cafeName = "카페";
-
-        return UserCupcatInfoResponseDto.from(userCupcat, cafeName);
     }
 
     public UserInfoUpdateResponseDto updateUserInfo(CustomUserdetails customUserdetails, String newUsername) {
@@ -94,10 +82,33 @@ public class UserService {
         return UserMainInfoResponseDto.from(user, subscription_count, cupcatImageUrl);
     }
 
+    public String getImgUrl(UserCupcat userCupcat) {
+        String cupcatImageUrl = userCupcat != null ? userCupcat.getCupcat().getImageUrl() : null;
+
+        return cupcatImageUrl;
+    }
+
     public String getCupcatImgUrl(User user) {
         Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
         String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
         return cupcatImageUrl;
+    }
+
+    public List<CupcatInfoResponseDto> getAllCupcats(User user) {
+        List<UserCupcat> userCupcats = userCupcatRepository.findAllByUserOrderByCreatedAtAsc(user);
+
+        return userCupcats.stream()
+                .map(CupcatInfoResponseDto::from)
+                .toList();
+    }
+
+    public UserCupcatInfoResponseDto getCupcatInfo(CustomUserdetails customUserdetails) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+
+        // user의 모든 컵캣
+        List<CupcatInfoResponseDto> cupcats = getAllCupcats(user);
+
+        return UserCupcatInfoResponseDto.from(user, cupcats);
     }
 }
