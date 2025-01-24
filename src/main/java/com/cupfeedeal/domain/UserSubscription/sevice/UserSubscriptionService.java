@@ -36,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +98,8 @@ public class UserSubscriptionService {
         user.setUser_level(user.getUser_level() + 1);
         userRepository.save(user);
 
-        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID) == 3){
+        List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
+        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3){
             throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
         }
 
@@ -109,8 +111,14 @@ public class UserSubscriptionService {
                 .plusDays(cafeSubscriptionType.getPeriod())
                 .atTime(23, 59, 59);
 
+        // subscription status 계산
+        SubscriptionStatus status = SubscriptionStatus.VALID;
+        if (LocalDate.now().isBefore(requestDto.subscriptionStart())) {
+            status = SubscriptionStatus.NOTYET;
+        }
+
         // user subscription 저장
-        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType, subscriptionDeadline);
+        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType, subscriptionDeadline, status);
         userSubscriptionRepository.save(userSubscription);
 
         Integer newCupcatLevel;
@@ -152,7 +160,7 @@ public class UserSubscriptionService {
     public UserSubscriptionValidListResponseDto getUserSubscriptions(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
-        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID);
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUserAndSubscriptionStatusIsValid(user);
         List<UserSubscriptionListResponseDto> userSubscriptionList =  userSubscriptions.stream()
                 .map(userSubscription -> convertToListResponseDto(userSubscription))
                 .toList();
@@ -215,11 +223,12 @@ public class UserSubscriptionService {
     public UserSubscriptionUseResponseDto useSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
         User user = userSubscription.getUser();
-        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
 
-        // 이미 사용했거나, 만료된 구독권에 대한 예외처리
+        // 이미 사용했거나, 사용 전 또는 만료된 구독권에 대한 예외처리
         if (userSubscription.getIsUsed() && userSubscription.getSubscriptionStatus() == SubscriptionStatus.VALID) {
             throw new ApplicationException(ExceptionCode.ALREADY_USED_SUBSCRIPTION);
+        } else if (userSubscription.getSubscriptionStatus() == SubscriptionStatus.NOTYET) {
+            throw new ApplicationException(ExceptionCode.BEFORE_SUBSCRIPTION_START);
         } else if (userSubscription.getSubscriptionStatus() != SubscriptionStatus.VALID) {
             throw new ApplicationException(ExceptionCode.ALREADY_EXPIRED_SUBSCRIPTION);
         }
@@ -233,8 +242,8 @@ public class UserSubscriptionService {
         userSubscriptionRepository.save(userSubscription);
 
         // is_getting_paw 여부 확인
-        Boolean isGettingPaw = !cafeSubscriptionType.getBreakDays().isEmpty()
-                && cafeSubscriptionType.getBreakDays().get(0).equals(userSubscription.getUsingCount());
+        Boolean isGettingPaw = isGettingPaw(userSubscription);
+
         // pawCount + 1
         if (isGettingPaw) {
             user.setPawCount(user.getPawCount() + 1);
@@ -242,6 +251,18 @@ public class UserSubscriptionService {
         }
 
         return UserSubscriptionUseResponseDto.from(isGettingPaw);
+    }
+
+    /*
+    is_getting_paw 여부 확인
+     */
+    public Boolean isGettingPaw(UserSubscription userSubscription) {
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+
+        Boolean isGettingPaw = !cafeSubscriptionType.getBreakDays().isEmpty()
+                && cafeSubscriptionType.getBreakDays().get(0).equals(userSubscription.getUsingCount());
+
+        return isGettingPaw;
     }
 
     /*
