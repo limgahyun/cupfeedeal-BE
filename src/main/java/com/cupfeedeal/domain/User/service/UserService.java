@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -31,6 +32,8 @@ public class UserService {
     @Autowired
     private CustomUserDetailService customUserDetailService;
 
+
+    // 리팩토링 완전 필요
     public UserInfoResponseDto getUserInfo(CustomUserdetails customUserdetails) {
         if (customUserdetails == null || customUserdetails.getUser() == null) {
             throw new ApplicationException(ExceptionCode.USER_NOT_FOUND);
@@ -40,7 +43,13 @@ public class UserService {
 
         String cupcatImageUrl = getCupcatImgUrl(user);
 
-        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl);
+        // 유효한 데이터 넘기도록 수정 필요
+        String cafeName = "카페";
+
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
+        LocalDate birthDate = (userCupcat.isPresent()) ? userCupcat.get().getCreatedAt().toLocalDate() : null;
+
+        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl, cafeName, birthDate);
 
         return userInfoResponseDto;
     }

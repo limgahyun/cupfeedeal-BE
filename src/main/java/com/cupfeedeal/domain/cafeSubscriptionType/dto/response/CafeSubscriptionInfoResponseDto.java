@@ -8,7 +8,7 @@ import java.util.List;
 public record CafeSubscriptionInfoResponseDto (
         Long cafe_id,
         String cafe_name,
-        String menu,
+        List<String> menus,
         List<Integer> periods,
         UserSubscriptionInfoResponseDto userSubscriptionInfo,
         List<CafeSubscriptionListResponseDto> cafe_subscriptions
@@ -17,7 +17,7 @@ public record CafeSubscriptionInfoResponseDto (
         return new CafeSubscriptionInfoResponseDto(
                 cafe.getId(),
                 cafe.getName(),
-                "아이스 아메리카노",
+                List.of("아이스 아메리카노"),
                 List.of(2, 4),
                 userSubscriptionInfo,
                 cafe_subscriptions
