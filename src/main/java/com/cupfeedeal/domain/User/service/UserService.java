@@ -78,6 +78,9 @@ public class UserService {
                 .toList();
     }
 
+    /*
+    지나간 컵캣 정보 조회
+     */
     public UserCupcatInfoResponseDto getCupcatInfo(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
