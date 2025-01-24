@@ -2,14 +2,9 @@ package com.cupfeedeal.domain.User.dto.response;
 
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.User.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
 public record UserInfoResponseDto (
     String username,
     Integer user_level,
