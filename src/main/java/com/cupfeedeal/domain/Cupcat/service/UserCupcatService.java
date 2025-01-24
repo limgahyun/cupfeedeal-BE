@@ -15,7 +15,7 @@ public class UserCupcatService {
     private  final UserCupcatRepository userCupcatRepository;
 
     public UserCupcat findUserCupcatByUser(User user) {
-        return userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
+        return userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user)
                 .orElse(null);
     }
 

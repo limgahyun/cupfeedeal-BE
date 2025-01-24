@@ -1,6 +1,5 @@
 package com.cupfeedeal.domain.User.service;
 
-import com.cupfeedeal.domain.Cupcat.entity.Cupcat;
 import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
 import com.cupfeedeal.domain.User.dto.response.*;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +28,6 @@ public class UserService {
     @Autowired
     private CustomUserDetailService customUserDetailService;
 
-
-    // 리팩토링 완전 필요
     public UserInfoResponseDto getUserInfo(CustomUserdetails customUserdetails) {
         if (customUserdetails == null || customUserdetails.getUser() == null) {
             throw new ApplicationException(ExceptionCode.USER_NOT_FOUND);
@@ -40,18 +36,10 @@ public class UserService {
         User user = customUserdetails.getUser();
 
         // userCupcat 조회
-        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
+        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user)
                 .orElse(null);
 
-
-        String cupcatImageUrl = getImgUrl(userCupcat);
-        String cafeName = userCupcat.getCafeName();
-
-        LocalDate birthDate = (userCupcat != null) ? userCupcat.getCreatedAt().toLocalDate() : null;
-
-        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getUsername(), user.getUser_level(), cupcatImageUrl, cafeName, birthDate);
-
-        return userInfoResponseDto;
+        return UserInfoResponseDto.from(user, userCupcat);
     }
 
     public UserInfoUpdateResponseDto updateUserInfo(CustomUserdetails customUserdetails, String newUsername) {
@@ -62,13 +50,6 @@ public class UserService {
         UserInfoUpdateResponseDto userInfoUpdateResponseDto = new UserInfoUpdateResponseDto(newUsername);
 
         return userInfoUpdateResponseDto;
-    }
-
-    public void createUserCupcat(User user, Cupcat cupcat) {
-        UserCupcat.builder()
-                .user(user)
-                .cupcat(cupcat)
-                .build();
     }
 
     public UserMainInfoResponseDto getUserMainInfo(CustomUserdetails customUserdetails) {
@@ -82,14 +63,8 @@ public class UserService {
         return UserMainInfoResponseDto.from(user, subscription_count, cupcatImageUrl);
     }
 
-    public String getImgUrl(UserCupcat userCupcat) {
-        String cupcatImageUrl = userCupcat != null ? userCupcat.getCupcat().getImageUrl() : null;
-
-        return cupcatImageUrl;
-    }
-
     public String getCupcatImgUrl(User user) {
-        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
+        Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user);
         String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
 
         return cupcatImageUrl;
@@ -103,6 +78,9 @@ public class UserService {
                 .toList();
     }
 
+    /*
+    지나간 컵캣 정보 조회
+     */
     public UserCupcatInfoResponseDto getCupcatInfo(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
