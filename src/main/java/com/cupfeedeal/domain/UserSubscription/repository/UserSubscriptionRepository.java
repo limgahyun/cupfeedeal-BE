@@ -42,4 +42,7 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
 
     @Query("SELECT us FROM UserSubscription us WHERE us.subscriptionDeadline <= :now AND us.subscriptionStatus = 'VALID'")
     List<UserSubscription> findAllAfterSubscriptionDeadline(@Param("now") LocalDateTime now);
+
+    @Query("SELECT COUNT(us) > 0 FROM UserSubscription us WHERE us.user = :user AND us.cafeSubscriptionType = :subscription AND us.subscriptionStatus in :status")
+    Boolean existsByUserAndCafeSubscriptionTypeAndStatus(@Param("user") User user, @Param("subscription") CafeSubscriptionType cafeSubscriptionType, @Param("status") List<SubscriptionStatus> status);
 }
