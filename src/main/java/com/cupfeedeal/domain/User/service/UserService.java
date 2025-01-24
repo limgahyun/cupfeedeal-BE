@@ -58,7 +58,7 @@ public class UserService {
         }
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
         String cupcatImageUrl = getCupcatImgUrl(user);
-        Integer subscription_count = userSubscriptionRepository.countAllByUser(user, SubscriptionStatus.VALID);
+        Integer subscription_count = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user);
 
         return UserMainInfoResponseDto.from(user, subscription_count, cupcatImageUrl);
     }
