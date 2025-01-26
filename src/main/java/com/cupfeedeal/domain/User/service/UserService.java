@@ -53,10 +53,10 @@ public class UserService {
     }
 
     public UserMainInfoResponseDto getUserMainInfo(CustomUserdetails customUserdetails) {
-        if (customUserdetails == null || customUserdetails.getUser() == null) {
+        User user = customUserdetails.getUser();
+        if (user == null) {
             return null;
         }
-        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
         String cupcatImageUrl = getCupcatImgUrl(user);
         Integer subscription_count = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user);
 
