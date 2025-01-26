@@ -17,9 +17,10 @@ public record UserSubscriptionManageListResponseDto (
         Integer price,
         LocalDateTime start,
         LocalDateTime end,
-        SubscriptionStatus status
+        SubscriptionStatus status,
+        Integer remain
 ){
-    public static UserSubscriptionManageListResponseDto from(UserSubscription userSubscription, Cafe cafe, CafeSubscriptionType cafeSubscriptionType) {
+    public static UserSubscriptionManageListResponseDto from(UserSubscription userSubscription, Cafe cafe, CafeSubscriptionType cafeSubscriptionType, Integer remain) {
         return new UserSubscriptionManageListResponseDto(
                 userSubscription.getUserSubscriptionId(),
                 cafe.getId(),
@@ -30,7 +31,8 @@ public record UserSubscriptionManageListResponseDto (
                 cafeSubscriptionType.getPrice(),
                 userSubscription.getSubscriptionStart(),
                 userSubscription.getSubscriptionDeadline(),
-                userSubscription.getSubscriptionStatus()
+                userSubscription.getSubscriptionStatus(),
+                remain
         );
     }
 }

@@ -286,8 +286,15 @@ public class UserSubscriptionService {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
+        Integer remaining_days = null;
 
-        return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType);
+        // 유효한 subscription의 경우 남은 일수 계산
+        if(userSubscription.getSubscriptionStatus() == SubscriptionStatus.VALID ||
+                userSubscription.getSubscriptionStatus() == SubscriptionStatus.NOTYET) {
+            remaining_days = getRemainingDays(userSubscription);
+        }
+
+        return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, remaining_days);
     }
 
     /*

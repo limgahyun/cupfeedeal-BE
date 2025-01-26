@@ -56,7 +56,7 @@ public class UserService {
         if (customUserdetails == null || customUserdetails.getUser() == null) {
             return null;
         }
-        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+        User user = customUserdetails.getUser();
         String cupcatImageUrl = getCupcatImgUrl(user);
         Integer subscription_count = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user);
 
