@@ -98,7 +98,8 @@ public class UserSubscriptionService {
 
         // 구독 가능 여부 확인
         List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
-        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && !userSubscriptionRepository.existsByUserAndCafeSubscriptionTypeAndStatus(user, cafeSubscriptionType, statuses)){
+        Optional<UserSubscription> existingUserSubscription = userSubscriptionRepository.findTop1ByUserAndCafeSubscriptionTypeAndStatus(user, cafeSubscriptionType, statuses);
+        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && existingUserSubscription.isEmpty()) {
             throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
         }
 
@@ -120,6 +121,12 @@ public class UserSubscriptionService {
         // user subscription 저장
         final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType, subscriptionDeadline, status);
         userSubscriptionRepository.save(userSubscription);
+
+        // 구독권 연장인 경우
+        if (existingUserSubscription.isPresent()) {
+            existingUserSubscription.get().setExtendedSubscriptionDeadline(subscriptionDeadline);
+            userSubscriptionRepository.save(existingUserSubscription.get());
+        }
 
         Integer newCupcatLevel;
         CupcatTypeEnum cupcatType;

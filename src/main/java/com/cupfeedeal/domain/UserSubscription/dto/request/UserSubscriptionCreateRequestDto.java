@@ -18,6 +18,7 @@ public record UserSubscriptionCreateRequestDto (
                 .cafeSubscriptionType(cafeSubscriptionType)
                 .subscriptionStart(subscriptionStart.atStartOfDay())
                 .subscriptionDeadline(subscriptionDeadline)
+                .extendedSubscriptionDeadline(subscriptionDeadline)
                 .usingCount(0)
                 .subscriptionStatus(subscriptionStatus)
                 .build();
