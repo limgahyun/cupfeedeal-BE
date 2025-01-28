@@ -32,7 +32,7 @@ public record UserSubscriptionListResponseDto (
                 userSubscription.getIsUsed(),
                 userSubscription.getUsingCount(),
                 userSubscription.getSubscriptionStart(),
-                userSubscription.getSubscriptionDeadline(),
+                userSubscription.getExtendedSubscriptionDeadline(),
                 remaining_days
         );
     }
