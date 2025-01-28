@@ -37,13 +37,6 @@ public class UserController {
         return new CommonResponse<> (userInfoResponseDto, "회원 정보를 성공적으로 조회했습니다.");
     }
 
-    @Operation(summary = "메인 홈에서 필요한 유저 정보 조회")
-    @GetMapping("/home")
-    public CommonResponse<UserInfoHomeResponseDto> getUserInfoHome(@AuthenticationPrincipal CustomUserdetails customUserdetails) {
-        UserInfoHomeResponseDto userInfoHomeResponseDto = userService.getUserInfoHome(customUserdetails);
-        return new CommonResponse<> (userInfoHomeResponseDto, "회원 정보를 성공적으로 조회했습니다.");
-    }
-
     @Operation(summary = "user nickname 변경")
     @PatchMapping("")
     public CommonResponse<UserInfoUpdateResponseDto> updateUserInfo(@AuthenticationPrincipal CustomUserdetails customUserdetails, @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
