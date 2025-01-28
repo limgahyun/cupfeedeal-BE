@@ -161,10 +161,6 @@ public class UserSubscriptionService {
         userCupcatService.createUserCupcat(user, newCupcat, cafeName);
     }
 
-    public void extendUserSubscription(UserSubscription userSubscription) {
-
-    }
-
     /*
     현재 구독중인 userSubscription list 조회
      */
