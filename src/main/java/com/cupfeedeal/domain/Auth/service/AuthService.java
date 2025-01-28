@@ -27,6 +27,8 @@ public class AuthService {
     private final CupcatTypeUtilService cupcatTypeUtilService;
 
     public LoginResponseDto login(KakaoUserInfoResponseDto userInfoResponseDto) {
+
+        //이미 회원가입이 되어있는 경우
         if (userRepository.findByEmail(userInfoResponseDto.getKakaoAccount().email).isPresent()) {
             User user = userRepository.findByEmail(userInfoResponseDto.getKakaoAccount().email).get();
             Integer subscription_count = userSubscriptionRepository.findAllByUser(user).size();
@@ -46,7 +48,9 @@ public class AuthService {
                     .build();
             return loginResponseDto;
         }
+        // 아직 회원이 아닌 경우
         else {
+            //회원으로 등록
             User user = User.builder()
                     .username(userInfoResponseDto.kakaoAccount.profile.nickname)
                     .email(userInfoResponseDto.kakaoAccount.email)
