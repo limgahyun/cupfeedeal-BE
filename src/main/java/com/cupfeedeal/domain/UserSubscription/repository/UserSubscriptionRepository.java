@@ -45,4 +45,7 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
 
     @Query("SELECT COUNT(us) > 0 FROM UserSubscription us WHERE us.user = :user AND us.cafeSubscriptionType = :subscription AND us.subscriptionStatus in :status")
     Boolean existsByUserAndCafeSubscriptionTypeAndStatus(@Param("user") User user, @Param("subscription") CafeSubscriptionType cafeSubscriptionType, @Param("status") List<SubscriptionStatus> status);
+
+    @Query("SELECT us FROM UserSubscription us WHERE us.user = :user AND us.cafeSubscriptionType = :subscription AND us.subscriptionStatus in :status order by us.createdAt desc LIMIT 1")
+    Optional<UserSubscription> findTop1ByUserAndCafeSubscriptionTypeAndStatus(@Param("user") User user, @Param("subscription") CafeSubscriptionType cafeSubscriptionType, @Param("status") List<SubscriptionStatus> status);
 }

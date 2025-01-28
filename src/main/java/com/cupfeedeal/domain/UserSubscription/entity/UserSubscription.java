@@ -36,6 +36,9 @@ public class UserSubscription extends BaseEntity {
     @Column(name = "subscription_deadline", nullable = false)
     private LocalDateTime subscriptionDeadline;
 
+    @Column(name = "extended_subscription_deadline")
+    private LocalDateTime extendedSubscriptionDeadline;
+
     @Column(name = "isUsed", nullable = false)
     private Boolean isUsed = false;
 
@@ -51,6 +54,9 @@ public class UserSubscription extends BaseEntity {
         if (isUsed == null) {
             isUsed = false;
         }
+        if (extendedSubscriptionDeadline == null) {
+            extendedSubscriptionDeadline = subscriptionDeadline;
+        }
     }
 
     @Builder
@@ -59,6 +65,7 @@ public class UserSubscription extends BaseEntity {
         this.cafeSubscriptionType = cafeSubscriptionType;
         this.subscriptionStart = subscriptionStart;
         this.subscriptionDeadline = subscriptionDeadline;
+        this.extendedSubscriptionDeadline = subscriptionDeadline;
         this.usingCount = usingCount;
         this.subscriptionStatus = subscriptionStatus;
     }
