@@ -140,7 +140,7 @@ public class UserSubscriptionService {
             newCupcatLevel = cupcatLevel + 1;
 
             // cupcat level이 이미 5인 경우
-            if (cupcatLevel == 6) {
+            if (cupcatLevel == 5) {
                 newCupcatLevel = 1;
                 cupcatType = cupcatTypeUtilService.getRandomCupcatType();
             }
