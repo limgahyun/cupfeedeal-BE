@@ -100,8 +100,6 @@ public class UserSubscriptionService {
         List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
         if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3){
             throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
-        } else if (userSubscriptionRepository.existsByUserAndCafeSubscriptionTypeAndStatus(user, cafeSubscriptionType, statuses)) {
-            throw new ApplicationException(ExceptionCode.ALREADY_SUBSCRIBED);
         }
 
         // user level + 1
