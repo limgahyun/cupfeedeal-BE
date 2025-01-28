@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.UserSubscription.repository;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
+import com.cupfeedeal.domain.cafe.entity.Cafe;
 import com.cupfeedeal.domain.cafeSubscriptionType.entity.CafeSubscriptionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -46,6 +47,6 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
     @Query("SELECT COUNT(us) > 0 FROM UserSubscription us WHERE us.user = :user AND us.cafeSubscriptionType = :subscription AND us.subscriptionStatus in :status")
     Boolean existsByUserAndCafeSubscriptionTypeAndStatus(@Param("user") User user, @Param("subscription") CafeSubscriptionType cafeSubscriptionType, @Param("status") List<SubscriptionStatus> status);
 
-    @Query("SELECT us FROM UserSubscription us WHERE us.user = :user AND us.cafeSubscriptionType = :subscription AND us.subscriptionStatus in :status order by us.createdAt desc LIMIT 1")
-    Optional<UserSubscription> findTop1ByUserAndCafeSubscriptionTypeAndStatus(@Param("user") User user, @Param("subscription") CafeSubscriptionType cafeSubscriptionType, @Param("status") List<SubscriptionStatus> status);
+    @Query("SELECT us FROM UserSubscription us WHERE us.user = :user AND us.cafeSubscriptionType.cafe = :cafe AND us.subscriptionStatus in :status order by us.createdAt desc LIMIT 1")
+    Optional<UserSubscription> findTop1ByUserAndCafeAndStatus(@Param("user") User user, @Param("cafe") Cafe cafe, @Param("status") List<SubscriptionStatus> status);
 }

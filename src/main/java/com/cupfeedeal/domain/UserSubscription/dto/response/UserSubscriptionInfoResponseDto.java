@@ -18,7 +18,7 @@ public record UserSubscriptionInfoResponseDto (
                 "아이스 아메리카노",
                 cafeSubscriptionType.getPeriod() / 7,
                 cafeSubscriptionType.getPrice(),
-                userSubscription.getSubscriptionDeadline()
+                userSubscription.getExtendedSubscriptionDeadline()
         );
     }
 }
