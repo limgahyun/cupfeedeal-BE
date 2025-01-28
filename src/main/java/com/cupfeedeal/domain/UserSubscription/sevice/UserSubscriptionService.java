@@ -98,7 +98,7 @@ public class UserSubscriptionService {
 
         // 구독 가능 여부 확인
         List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
-        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3){
+        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && !userSubscriptionRepository.existsByUserAndCafeSubscriptionTypeAndStatus(user, cafeSubscriptionType, statuses)){
             throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
         }
 
