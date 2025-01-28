@@ -24,18 +24,16 @@ public class KakaoService {
     private final String KAUTH_TOKEN_URL_HOST;
     private final String KAUTH_USER_URL_HOST;
     private UserRepository userRepository;
-    private final String redirectUri;
 
     @Autowired
-    public KakaoService(@Value("${spring.kakao.client_id}") String clientId, UserRepository userRepository, @Value("${spring.kakao.redirect_uri}") String redirectUri){
+    public KakaoService(@Value("${spring.kakao.client_id}") String clientId, UserRepository userRepository){
         this.clientId = clientId;
-        this.redirectUri = redirectUri;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
         this.userRepository = userRepository;
     }
 
-    public String getAccessTokenFromKakao(String code){
+    public String getAccessTokenFromKakao(String code, String redirectUri) {
         KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
