@@ -35,9 +35,9 @@ public class AuthController {
     }
 
     @GetMapping("/callback/backend")
-    public CommonResponse<?> callbackBackend(@RequestParam("code") String code, @RequestParam("redirect_uri") String redirectUri) throws IOException {
+    public CommonResponse<?> callbackBackend(@RequestParam("code") String code) throws IOException {
 
-        log.info("Received redirect_uri: {}", redirectUri);
+        String redirectUri = "https://api.cupfeedeal.xyz/api/v1/auth/callback";
 
         String accessToken = kakaoService.getAccessTokenFromKakao(code, redirectUri);
 
