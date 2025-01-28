@@ -28,7 +28,7 @@ public class UserSubscriptionController {
     @PostMapping
     public CommonResponse<Void> createUserSubscription(
             @AuthenticationPrincipal CustomUserdetails customUserdetails,
-            UserSubscriptionCreateRequestDto userSubscription
+            @RequestBody UserSubscriptionCreateRequestDto userSubscription
     ) {
         userSubscriptionService.createUserSubscription(customUserdetails, userSubscription);
         return new CommonResponse<>("new userSubscription 생성에 성공하였습니다.");
