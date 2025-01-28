@@ -5,6 +5,7 @@ import com.cupfeedeal.domain.Cupcat.entity.UserCupcat;
 import com.cupfeedeal.domain.Cupcat.enumerate.CupcatTypeEnum;
 import com.cupfeedeal.domain.Cupcat.repository.CupcatRepository;
 import com.cupfeedeal.domain.Cupcat.repository.UserCupcatRepository;
+import com.cupfeedeal.domain.Cupcat.service.CupcatTypeUtilService;
 import com.cupfeedeal.domain.Cupcat.service.UserCupcatService;
 import com.cupfeedeal.domain.User.dto.response.PaymentHistoryResponseDto;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
@@ -35,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +54,7 @@ public class UserSubscriptionService {
     private final CafeSubscriptionTypeRepository cafeSubscriptionTypeRepository;
     private final CafeService cafeService;
     private final UserRepository userRepository;
+    private final CupcatTypeUtilService cupcatTypeUtilService;
 
     public UserSubscription findUserSubscriptionById(Long userSubscriptionId) {
         return userSubscriptionRepository.findById(userSubscriptionId)
@@ -90,20 +93,32 @@ public class UserSubscriptionService {
     @Transactional
     public void createUserSubscription(CustomUserdetails customUserdetails, UserSubscriptionCreateRequestDto requestDto) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+        CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
+        Cafe cafe = cafeSubscriptionType.getCafe();
 
-        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID) == 3){
+        // 구독 가능 여부 확인
+        List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
+        if (userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && !userSubscriptionRepository.existsByUserAndCafeSubscriptionTypeAndStatus(user, cafeSubscriptionType, statuses)){
             throw new ApplicationException(ExceptionCode.ALREADY_FULL_SUBSCRIPTION);
         }
 
-        CafeSubscriptionType cafeSubscriptionType = cafeSubscriptionTypeService.findCafeSubscriptionTypeById(requestDto.cafeSubscriptionTypeId());
+        // user level + 1
+        user.setUser_level(user.getUser_level() + 1);
+        userRepository.save(user);
 
         // subscription deadline 계산
         LocalDateTime subscriptionDeadline = requestDto.subscriptionStart()
                 .plusDays(cafeSubscriptionType.getPeriod())
                 .atTime(23, 59, 59);
 
+        // subscription status 계산
+        SubscriptionStatus status = SubscriptionStatus.VALID;
+        if (LocalDate.now().isBefore(requestDto.subscriptionStart())) {
+            status = SubscriptionStatus.NOTYET;
+        }
+
         // user subscription 저장
-        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType, subscriptionDeadline);
+        final UserSubscription userSubscription = requestDto.toEntity(user, cafeSubscriptionType, subscriptionDeadline, status);
         userSubscriptionRepository.save(userSubscription);
 
         Integer newCupcatLevel;
@@ -111,7 +126,7 @@ public class UserSubscriptionService {
 
         // user cupcat 생성
         // 현재 cupcat 정보 확인
-        Optional<UserCupcat> present_userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user);
+        Optional<UserCupcat> present_userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user);
 
         if (present_userCupcat.isPresent()) {
             UserCupcat currentCupcat = present_userCupcat.get();
@@ -121,14 +136,22 @@ public class UserSubscriptionService {
 
             // level + 1
             newCupcatLevel = cupcatLevel + 1;
+
+            // cupcat level이 이미 5인 경우
+            if (cupcatLevel == 5) {
+                newCupcatLevel = 1;
+                cupcatType = cupcatTypeUtilService.getRandomCupcatType();
+            }
         } else {
-            newCupcatLevel = 0;
-            cupcatType = CupcatTypeEnum.A;
+            newCupcatLevel = 1;
+            cupcatType = cupcatTypeUtilService.getRandomCupcatType();
         }
 
         // new userCupcat 생성
+        String cafeName = cafe.getName();
+
         Cupcat newCupcat = cupcatRepository.findByLevelAndType(newCupcatLevel, cupcatType);
-        userCupcatService.createUserCupcat(user, newCupcat);
+        userCupcatService.createUserCupcat(user, newCupcat, cafeName);
     }
 
     /*
@@ -137,7 +160,7 @@ public class UserSubscriptionService {
     public UserSubscriptionValidListResponseDto getUserSubscriptions(CustomUserdetails customUserdetails) {
         User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
-        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUserAndSubscriptionStatusIsValid(user, SubscriptionStatus.VALID);
+        List<UserSubscription> userSubscriptions = userSubscriptionRepository.findByUserAndSubscriptionStatusIsValid(user);
         List<UserSubscriptionListResponseDto> userSubscriptionList =  userSubscriptions.stream()
                 .map(userSubscription -> convertToListResponseDto(userSubscription))
                 .toList();
@@ -200,11 +223,12 @@ public class UserSubscriptionService {
     public UserSubscriptionUseResponseDto useSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
         User user = userSubscription.getUser();
-        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
 
-        // 이미 사용했거나, 만료된 구독권에 대한 예외처리
+        // 이미 사용했거나, 사용 전 또는 만료된 구독권에 대한 예외처리
         if (userSubscription.getIsUsed() && userSubscription.getSubscriptionStatus() == SubscriptionStatus.VALID) {
             throw new ApplicationException(ExceptionCode.ALREADY_USED_SUBSCRIPTION);
+        } else if (userSubscription.getSubscriptionStatus() == SubscriptionStatus.NOTYET) {
+            throw new ApplicationException(ExceptionCode.BEFORE_SUBSCRIPTION_START);
         } else if (userSubscription.getSubscriptionStatus() != SubscriptionStatus.VALID) {
             throw new ApplicationException(ExceptionCode.ALREADY_EXPIRED_SUBSCRIPTION);
         }
@@ -218,8 +242,8 @@ public class UserSubscriptionService {
         userSubscriptionRepository.save(userSubscription);
 
         // is_getting_paw 여부 확인
-        Boolean isGettingPaw = !cafeSubscriptionType.getBreakDays().isEmpty()
-                && cafeSubscriptionType.getBreakDays().get(0).equals(userSubscription.getUsingCount());
+        Boolean isGettingPaw = isGettingPaw(userSubscription);
+
         // pawCount + 1
         if (isGettingPaw) {
             user.setPawCount(user.getPawCount() + 1);
@@ -227,6 +251,18 @@ public class UserSubscriptionService {
         }
 
         return UserSubscriptionUseResponseDto.from(isGettingPaw);
+    }
+
+    /*
+    is_getting_paw 여부 확인
+     */
+    public Boolean isGettingPaw(UserSubscription userSubscription) {
+        CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
+
+        Boolean isGettingPaw = !cafeSubscriptionType.getBreakDays().isEmpty()
+                && cafeSubscriptionType.getBreakDays().get(0).equals(userSubscription.getUsingCount());
+
+        return isGettingPaw;
     }
 
     /*
@@ -248,8 +284,15 @@ public class UserSubscriptionService {
 
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
         Cafe cafe = userSubscription.getCafeSubscriptionType().getCafe();
+        Integer remaining_days = null;
 
-        return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType);
+        // 유효한 subscription의 경우 남은 일수 계산
+        if(userSubscription.getSubscriptionStatus() == SubscriptionStatus.VALID ||
+                userSubscription.getSubscriptionStatus() == SubscriptionStatus.NOTYET) {
+            remaining_days = getRemainingDays(userSubscription);
+        }
+
+        return UserSubscriptionManageListResponseDto.from(userSubscription, cafe, cafeSubscriptionType, remaining_days);
     }
 
     /*
@@ -310,6 +353,7 @@ public class UserSubscriptionService {
     /*
     구독 취소
      */
+    @Transactional
     public void cancelSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
         User user = userSubscription.getUser();

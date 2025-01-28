@@ -25,10 +25,13 @@ public class UserCupcat extends BaseEntity {
     @JoinColumn(name = "cupcatId", nullable = false)
     private Cupcat cupcat;
 
+    private String cafeName;
+
     @Builder
-    public UserCupcat(User user, Cupcat cupcat) {
+    public UserCupcat(User user, Cupcat cupcat, String cafeName) {
         this.user = user;
         this.cupcat = cupcat;
+        this.cafeName = cafeName;
     }
 
 }

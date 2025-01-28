@@ -15,15 +15,16 @@ public class UserCupcatService {
     private  final UserCupcatRepository userCupcatRepository;
 
     public UserCupcat findUserCupcatByUser(User user) {
-        return userCupcatRepository.findTop1ByUserOrderByCreatedAtAsc(user)
+        return userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user)
                 .orElse(null);
     }
 
     @Transactional
-    public void createUserCupcat(User user, Cupcat cupcat) {
+    public void createUserCupcat(User user, Cupcat cupcat, String cafeName) {
         UserCupcat userCupcat = UserCupcat.builder()
                 .user(user)
                 .cupcat(cupcat)
+                .cafeName(cafeName)
                 .build();
         userCupcatRepository.save(userCupcat);
     }

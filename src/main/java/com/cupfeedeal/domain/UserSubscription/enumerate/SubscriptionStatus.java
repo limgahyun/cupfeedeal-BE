@@ -1,5 +1,5 @@
 package com.cupfeedeal.domain.UserSubscription.enumerate;
 
 public enum SubscriptionStatus {
-    CANCELED, EXPIRED, VALID
+    NOTYET, CANCELED, EXPIRED, VALID
 }
