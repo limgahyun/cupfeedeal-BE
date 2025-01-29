@@ -15,7 +15,10 @@ import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import com.cupfeedeal.domain.User.entity.CustomUserdetails;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,7 +62,7 @@ public class AuthController {
     }
 
     private CommonResponse<?> forceLogin(Integer userId) {
-        User user = userRepository.findById(Long.valueOf(userId))
+        User user = userRepository.findByUserId(Long.valueOf(userId))
                 .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
 
         String token = jwtTokenProvider.createToken(user.getUserId());
@@ -72,6 +75,15 @@ public class AuthController {
                 .build();
 
         return new CommonResponse<>(loginResponseDto, "데모 계정 로그인 성공");
+    }
+
+    @DeleteMapping("/withdraw")
+    public CommonResponse<?> withdraw(@AuthenticationPrincipal CustomUserdetails customUserDetails) {
+        Long userId = customUserDetails.getUserId();
+
+        authService.withdraw(userId);
+
+        return new CommonResponse<>(null, "회원 탈퇴가 완료되었습니다.");
     }
 
     @GetMapping("/callback/backend")
