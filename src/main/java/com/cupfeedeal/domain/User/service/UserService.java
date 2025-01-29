@@ -57,17 +57,17 @@ public class UserService {
             return null;
         }
         User user = customUserdetails.getUser();
-        String cupcatImageUrl = getCupcatImgUrl(user);
+        Long cupcatId = getCupcatId(user);
         Integer subscription_count = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user);
 
-        return UserMainInfoResponseDto.from(user, subscription_count, cupcatImageUrl);
+        return UserMainInfoResponseDto.from(user, subscription_count, cupcatId);
     }
 
-    public String getCupcatImgUrl(User user) {
+    public Long getCupcatId(User user) {
         Optional<UserCupcat> userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user);
-        String cupcatImageUrl = userCupcat.isPresent() ? userCupcat.get().getCupcat().getImageUrl() : null;
+        Long cupcatId = userCupcat.isPresent() ? userCupcat.get().getCupcat().getCupcatId() : null;
 
-        return cupcatImageUrl;
+        return cupcatId;
     }
 
     public List<CupcatInfoResponseDto> getAllCupcats(User user) {
