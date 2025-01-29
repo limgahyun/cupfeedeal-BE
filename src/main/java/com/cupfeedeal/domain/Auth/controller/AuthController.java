@@ -45,7 +45,7 @@ public class AuthController {
     @GetMapping("/callback/demo")
     public CommonResponse<?> callbackDemo(@RequestParam("code") String code, @RequestParam("redirect_uri") String redirectUri, @RequestParam("userId") Integer userId) throws IOException {
 
-        if(userId >=1 && userId <=4) {
+        if(userId >=11 && userId <=14) {
             return forceLogin(userId);
         }
 
