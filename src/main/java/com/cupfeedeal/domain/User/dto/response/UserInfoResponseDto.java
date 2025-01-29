@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public record UserInfoResponseDto (
     String username,
     Integer user_level,
-    String cupcatImgUrl,
+    Long cupcat_id,
     String cafe_name,
     LocalDate birth_date
 
@@ -17,7 +17,7 @@ public record UserInfoResponseDto (
         return new UserInfoResponseDto(
                 user.getUsername(),
                 user.getUser_level(),
-                userCupcat == null ? null : userCupcat.getCupcat().getImageUrl(),
+                userCupcat == null ? null : userCupcat.getCupcat().getCupcatId(),
                 userCupcat == null ? null : userCupcat.getCafeName(),
                 userCupcat == null ? null : userCupcat.getCreatedAt().toLocalDate()
         );
