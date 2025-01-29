@@ -2,7 +2,9 @@ package com.cupfeedeal.domain.Auth.service;
 
 import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoTokenResponseDto;
 import com.cupfeedeal.domain.Auth.dto.responseDto.KakaoUserInfoResponseDto;
+import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
+import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -26,7 +29,7 @@ public class KakaoService {
     private UserRepository userRepository;
 
     @Autowired
-    public KakaoService(@Value("${spring.kakao.client_id}") String clientId, UserRepository userRepository){
+    public KakaoService(@Value("${spring.kakao.client_id}") String clientId, UserRepository userRepository) {
         this.clientId = clientId;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
@@ -87,6 +90,27 @@ public class KakaoService {
 //        log.info("[ Kakao Service ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickname());
 
         return userInfo;
+    }
+
+    public void unlinkKakaoAccount(Long userId) {
+        String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
+
+        try{
+            String accessToken = SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getCredentials()
+                    .toString();
+
+            WebClient.create(KAUTH_USER_URL_HOST)
+                    .post()
+                    .uri(kakaoUnlinkUrl)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken) // JWT 토큰 사용
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e){
+            log.error("카카오 연결 끊기 실패 - userId: {}", userId, e);
+        }
     }
 
 
