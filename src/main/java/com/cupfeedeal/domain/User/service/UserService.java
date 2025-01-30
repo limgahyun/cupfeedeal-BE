@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public UserInfoUpdateResponseDto updateUserInfo(CustomUserdetails customUserdetails, String newUsername) {
-        User user = customUserdetails.getUser();
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
         user.setUsername(newUsername);
         userRepository.save(user);
 
@@ -53,10 +53,7 @@ public class UserService {
     }
 
     public UserMainInfoResponseDto getUserMainInfo(CustomUserdetails customUserdetails) {
-        if (customUserdetails == null || customUserdetails.getUser() == null) {
-            return null;
-        }
-        User user = customUserdetails.getUser();
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
         Long cupcatId = getCupcatId(user);
         Integer subscription_count = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user);
 

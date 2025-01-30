@@ -63,7 +63,7 @@ public class UserSubscriptionService {
 
     public List<PaymentHistoryResponseDto> getUserPaymentHistory(CustomUserdetails customUserdetails) {
 
-        User user = customUserdetails.getUser();
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
         List<UserSubscription> userSubscriptions = userSubscriptionRepository.findAllByUser(user);
         List<PaymentHistoryResponseDto> responseList = new ArrayList<>();
