@@ -7,6 +7,7 @@ import com.cupfeedeal.domain.User.repository.UserRepository;
 import com.cupfeedeal.global.exception.ApplicationException;
 import com.cupfeedeal.global.exception.ExceptionCode;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,22 +93,27 @@ public class KakaoService {
         return userInfo;
     }
 
-    public void unlinkKakaoAccount(Long userId) {
+    public void unlinkKakaoAccount(Long userId, HttpServletRequest request) {
         String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
 
         try{
-            String accessToken = SecurityContextHolder.getContext()
-                    .getAuthentication()
-                    .getCredentials()
-                    .toString();
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            WebClient.create(KAUTH_USER_URL_HOST)
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                log.error("유효한 카카오 Access Token이 없습니다 - userId: {}", userId);
+                return;
+            }
+
+            String accessToken = authorizationHeader.substring(7);
+
+            String response = WebClient.create(KAUTH_USER_URL_HOST)
                     .post()
                     .uri(kakaoUnlinkUrl)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken) // JWT 토큰 사용
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken) // ✅ 올바른 카카오 Access Token 사용
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
+
         } catch (Exception e){
             log.error("카카오 연결 끊기 실패 - userId: {}", userId, e);
         }
