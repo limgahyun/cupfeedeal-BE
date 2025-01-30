@@ -365,7 +365,7 @@ public class UserSubscriptionService {
     구독 취소
      */
     @Transactional
-    public void cancelSubscription(Long userSubscriptionId) {
+    public UserSubscriptionCancelResponseDto cancelSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
         User user = userSubscription.getUser();
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
@@ -382,5 +382,7 @@ public class UserSubscriptionService {
             user.setPawCount(user.getPawCount() - 1);
             userRepository.save(user);
         }
+
+        return UserSubscriptionCancelResponseDto.from(user);
     }
 }
