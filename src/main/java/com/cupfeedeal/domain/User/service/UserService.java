@@ -53,7 +53,10 @@ public class UserService {
     }
 
     public UserMainInfoResponseDto getUserMainInfo(CustomUserdetails customUserdetails) {
-        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+        if (customUserdetails == null || customUserdetails.getUser() == null) {
+            return null;
+        }
+        User user = customUserdetails.getUser();
         Long cupcatId = getCupcatId(user);
         Integer subscription_count = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValid(user);
 
