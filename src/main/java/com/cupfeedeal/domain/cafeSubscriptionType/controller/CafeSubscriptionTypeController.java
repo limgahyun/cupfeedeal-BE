@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Cafe Subscription Type", description = "cafe subscription type api")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/cafeSubscriptionType")
+@RequestMapping("/api/v1/cafeSubscriptionType")
 public class CafeSubscriptionTypeController {
     private final CafeSubscriptionTypeService cafeSubscriptionTypeService;
 

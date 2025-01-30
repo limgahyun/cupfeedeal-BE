@@ -72,6 +72,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/users/**", "/api/v1/like/**", "/api/v1/userSubscription/**").hasRole("USER")
                         .anyRequest().authenticated());
         http
                 .logout((logout) -> logout

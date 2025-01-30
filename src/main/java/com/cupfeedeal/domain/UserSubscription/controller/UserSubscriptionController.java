@@ -16,7 +16,7 @@ import java.util.List;
 @Tag(name = "User Subscription", description = "user subscription api")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/userSubscription")
+@RequestMapping("/api/v1/userSubscription")
 public class UserSubscriptionController {
 
     private final UserSubscriptionService userSubscriptionService;
