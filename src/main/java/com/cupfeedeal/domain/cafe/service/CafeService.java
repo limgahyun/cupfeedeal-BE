@@ -3,7 +3,6 @@ package com.cupfeedeal.domain.cafe.service;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.UserCafeLike.repository.UserCafeLikeRepository;
-import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

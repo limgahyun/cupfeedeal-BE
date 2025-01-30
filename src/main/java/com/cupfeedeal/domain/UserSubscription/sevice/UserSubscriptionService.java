@@ -315,7 +315,7 @@ public class UserSubscriptionService {
         Boolean isExtension = cafeSubscriptionTypeInfo.isExtension();
 
         if (!isExtension) {
-            return getCafeSubscriptionTypeWithoutExtension(id);
+            return getCafeSubscriptionTypeWithoutExtension(customUserdetails, id);
         } else {
             return getCafeSubscriptionTypeWithExtension(customUserdetails, id);
         }
@@ -324,9 +324,20 @@ public class UserSubscriptionService {
     /*
     구독중이 아닌 경우 cafeSubscriptionType 조회
      */
-    public CafeSubscriptionInfoResponseDto getCafeSubscriptionTypeWithoutExtension(Long cafeId) {
+    public CafeSubscriptionInfoResponseDto getCafeSubscriptionTypeWithoutExtension(CustomUserdetails customUserdetails, Long cafeId) {
+        User user = customUserdetails.getUser();
+
         Cafe cafe = cafeService.findCafeById(cafeId);
         List<CafeSubscriptionType> cafeSubscriptionTypeList = cafeSubscriptionTypeRepository.findAllByCafeId(cafeId);
+
+        // 실제로 해당 카페에 구독권이 있는지 여부 반환
+        List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
+        Optional<UserSubscription> existingUserSubscription = userSubscriptionRepository.findTop1ByUserAndCafeAndStatus(user, cafe, statuses);
+
+        // isExtension = false 인데 실제로는 구독권이 있는 경우 에러 반환
+        if (existingUserSubscription.isPresent()) {
+            throw new ApplicationException(ExceptionCode.ALREADY_SUBSCRIBED_CAFE);
+        }
 
         // cafeSubscriptionType list를 dto로 변환
         List<CafeSubscriptionListResponseDto> cafeSubscriptionListResponseDtoList = cafeSubscriptionTypeList.stream()
@@ -334,6 +345,13 @@ public class UserSubscriptionService {
                 .toList();
 
         return CafeSubscriptionInfoResponseDto.from(cafe, null, cafeSubscriptionListResponseDtoList);
+    }
+
+    Optional<UserSubscription> findUserSubscription(CustomUserdetails customUserdetails, Cafe cafe) {
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
+
+        List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
+        return userSubscriptionRepository.findTop1ByUserAndCafeAndStatus(user, cafe, statuses);
     }
 
     /*
@@ -344,6 +362,15 @@ public class UserSubscriptionService {
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
         Cafe cafe = cafeSubscriptionType.getCafe();
 
+        // 실제로 해당 카페에 구독권이 있는지 여부 반환
+        Boolean existingUserSubscription = findUserSubscription(customUserdetails, cafe).isPresent();
+
+        // isExtension = true인데 실제로 구독권이 존재하지 않는 경우 에러 반환
+        if (!existingUserSubscription) {
+            throw new ApplicationException(ExceptionCode.NOT_FOUND_USER_SUBSCRIPTION);
+        }
+
+        // 해당 카페의 모든 cafeSubscriptionType 조회
         List<CafeSubscriptionType> cafeSubscriptionTypeList = cafeSubscriptionTypeRepository.findAllByCafe(cafe);
 
         // cafeSubscriptionType list를 dto로 변환
@@ -354,10 +381,6 @@ public class UserSubscriptionService {
         // 구독권 정보를 dto로 변환
         UserSubscriptionInfoResponseDto userSubscriptionInfo = UserSubscriptionInfoResponseDto.from(userSubscription, cafeSubscriptionType);
 
-        // 인증되지 않은 사용자 로직
-        if (customUserdetails == null) {
-            return CafeSubscriptionInfoResponseDto.from(cafe, null, cafeSubscriptionListResponseDtoList);
-        }
 
         return CafeSubscriptionInfoResponseDto.from(cafe, userSubscriptionInfo, cafeSubscriptionListResponseDtoList);
     }
