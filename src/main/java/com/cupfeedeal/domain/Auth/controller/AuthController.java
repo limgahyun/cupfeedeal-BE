@@ -45,20 +45,14 @@ public class AuthController {
         return new CommonResponse<>(loginResponseDto, "카카오 로그인에 성공했습니다.");
     }
 
-    @GetMapping("/callback/demo")
-    public CommonResponse<?> callbackDemo(@RequestParam("code") String code, @RequestParam("redirect_uri") String redirectUri, @RequestParam("userId") Integer userId) throws IOException {
+    @GetMapping("/login/demo/{userId}")
+    public CommonResponse<?> demoLogin(@PathVariable("userId") Integer userId) throws IOException {
 
         if(userId >=11 && userId <=14) {
             return forceLogin(userId);
         }
 
-        String accessToken = kakaoService.getAccessTokenFromKakao(code, redirectUri);
-
-        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
-
-        LoginResponseDto loginResponseDto = authService.login(userInfo);
-
-        return new CommonResponse<>(loginResponseDto, "카카오 로그인에 성공했습니다.");
+        return new CommonResponse<>(null, "카카오 로그인에 성공했습니다.");
     }
 
     private CommonResponse<?> forceLogin(Integer userId) {
@@ -78,10 +72,10 @@ public class AuthController {
     }
 
     @DeleteMapping("/withdraw")
-    public CommonResponse<?> withdraw(@AuthenticationPrincipal CustomUserdetails customUserDetails) {
+    public CommonResponse<?> withdraw(@AuthenticationPrincipal CustomUserdetails customUserDetails, HttpServletRequest request) {
         Long userId = customUserDetails.getUserId();
 
-        authService.withdraw(userId);
+        authService.withdraw(userId, request);
 
         return new CommonResponse<>(null, "회원 탈퇴가 완료되었습니다.");
     }
