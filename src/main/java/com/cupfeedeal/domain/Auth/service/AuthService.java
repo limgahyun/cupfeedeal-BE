@@ -11,9 +11,16 @@ import com.cupfeedeal.domain.Cupcat.service.UserCupcatService;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
+import com.cupfeedeal.global.exception.ApplicationException;
+import com.cupfeedeal.global.exception.ExceptionCode;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +32,7 @@ public class AuthService {
     private final UserCupcatService userCupcatService;
     private final CupcatRepository cupcatRepository;
     private final CupcatTypeUtilService cupcatTypeUtilService;
+    private final KakaoService kakaoService;
 
     public LoginResponseDto login(KakaoUserInfoResponseDto userInfoResponseDto) {
 
@@ -82,6 +90,18 @@ public class AuthService {
             log.info("[AuthService] userId: {}", user.getUserId());
             return loginResponseDto;
         }
+    }
+
+    @Transactional
+    public void withdraw(Long userId, HttpServletRequest request){
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ApplicationException(ExceptionCode.USER_NOT_FOUND));
+
+//        user.setDeletedAt(LocalDateTime.now());
+        user.setDeletedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        userRepository.save(user);
+
+        kakaoService.unlinkKakaoAccount(userId, request);
     }
 
 }
