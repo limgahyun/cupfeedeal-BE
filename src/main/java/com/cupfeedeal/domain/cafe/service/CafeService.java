@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.cafe.service;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.UserCafeLike.repository.UserCafeLikeRepository;
+import com.cupfeedeal.domain.UserSubscription.entity.UserSubscription;
 import com.cupfeedeal.domain.UserSubscription.enumerate.SubscriptionStatus;
 import com.cupfeedeal.domain.UserSubscription.repository.UserSubscriptionRepository;
 import com.cupfeedeal.domain.cafe.dto.request.CafeCreateRequestDto;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -111,7 +113,11 @@ public class CafeService {
         List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
         Boolean is_subscribed = userSubscriptionRepository.findTop1ByUserAndCafeAndStatus(user, cafe, statuses).isPresent();
 
-        return CafeInfoResponseDto.from(cafe, cafeImageResponseDtoList, is_like, is_subscribed);
+        // 구독권이 이미 3개인지 여부 반환
+        Optional<UserSubscription> existingUserSubscription = userSubscriptionRepository.findTop1ByUserAndCafeAndStatus(user, cafe, statuses);
+        Boolean is_full_subscriptions = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && existingUserSubscription.isEmpty();
+
+        return CafeInfoResponseDto.from(cafe, cafeImageResponseDtoList, is_like, is_subscribed, is_full_subscriptions);
     }
 
     /*
