@@ -252,12 +252,16 @@ public class UserSubscriptionService {
         Boolean isGettingPaw = isGettingPaw(userSubscription);
 
         // pawCount + 1
+        Integer pawCount = user.getPawCount();
         if (isGettingPaw) {
-            user.setPawCount(user.getPawCount() + 1);
+            user.setPawCount(pawCount + 1);
             userRepository.save(user);
         }
 
-        return UserSubscriptionUseResponseDto.from(isGettingPaw);
+        // 아낀 잔 수 계산
+        Double saved_cups = getSavedCups(userSubscription.getCafeSubscriptionType(), userSubscription.getUsingCount());
+
+        return UserSubscriptionUseResponseDto.from(isGettingPaw, saved_cups, pawCount);
     }
 
     /*
@@ -361,7 +365,7 @@ public class UserSubscriptionService {
     구독 취소
      */
     @Transactional
-    public void cancelSubscription(Long userSubscriptionId) {
+    public UserSubscriptionCancelResponseDto cancelSubscription(Long userSubscriptionId) {
         UserSubscription userSubscription = findUserSubscriptionById(userSubscriptionId);
         User user = userSubscription.getUser();
         CafeSubscriptionType cafeSubscriptionType = userSubscription.getCafeSubscriptionType();
@@ -378,5 +382,7 @@ public class UserSubscriptionService {
             user.setPawCount(user.getPawCount() - 1);
             userRepository.save(user);
         }
+
+        return UserSubscriptionCancelResponseDto.from(user);
     }
 }

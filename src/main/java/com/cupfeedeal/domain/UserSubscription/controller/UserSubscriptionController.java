@@ -2,10 +2,7 @@ package com.cupfeedeal.domain.UserSubscription.controller;
 
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.UserSubscription.dto.request.UserSubscriptionCreateRequestDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionListResponseDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionManageListResponseDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionUseResponseDto;
-import com.cupfeedeal.domain.UserSubscription.dto.response.UserSubscriptionValidListResponseDto;
+import com.cupfeedeal.domain.UserSubscription.dto.response.*;
 import com.cupfeedeal.domain.UserSubscription.sevice.UserSubscriptionService;
 import com.cupfeedeal.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,10 +60,10 @@ public class UserSubscriptionController {
 
     @Operation(summary = "user subscription 취소 (환불)")
     @PatchMapping("/cancel/{userSubscriptionId}")
-    public CommonResponse<Void> cancelUserSubscription(
+    public CommonResponse<UserSubscriptionCancelResponseDto> cancelUserSubscription(
             @PathVariable Long userSubscriptionId
     ){
-        userSubscriptionService.cancelSubscription(userSubscriptionId);
-        return new CommonResponse<>("구독권 취소에 성공하였습니다.");
+        UserSubscriptionCancelResponseDto responseDto = userSubscriptionService.cancelSubscription(userSubscriptionId);
+        return new CommonResponse<>(responseDto, "구독권 취소에 성공하였습니다.");
     }
 }
