@@ -252,12 +252,16 @@ public class UserSubscriptionService {
         Boolean isGettingPaw = isGettingPaw(userSubscription);
 
         // pawCount + 1
+        Integer pawCount = user.getPawCount();
         if (isGettingPaw) {
-            user.setPawCount(user.getPawCount() + 1);
+            user.setPawCount(pawCount + 1);
             userRepository.save(user);
         }
 
-        return UserSubscriptionUseResponseDto.from(isGettingPaw);
+        // 아낀 잔 수 계산
+        Double saved_cups = getSavedCups(userSubscription.getCafeSubscriptionType(), userSubscription.getUsingCount());
+
+        return UserSubscriptionUseResponseDto.from(isGettingPaw, saved_cups, pawCount);
     }
 
     /*
