@@ -401,6 +401,10 @@ public class UserSubscriptionService {
         // user level - 1
         user.setUser_level(user.getUser_level() - 1);
 
+        // user cupcat 삭제
+        UserCupcat userCupcat = userCupcatRepository.findTop1ByUserOrderByCreatedAtDesc(user).get();
+        userCupcat.setDeletedAt(LocalDateTime.now());
+
         // 해당 구독권으로 발자국이 찍힌 경우 발자국 count - 1
         Boolean deletePaw = !cafeSubscriptionType.getBreakDays().isEmpty()
                 && cafeSubscriptionType.getBreakDays().get(0) <= (userSubscription.getUsingCount());
