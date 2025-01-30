@@ -254,7 +254,8 @@ public class UserSubscriptionService {
         // pawCount + 1
         Integer pawCount = user.getPawCount();
         if (isGettingPaw) {
-            user.setPawCount(pawCount + 1);
+            pawCount++;
+            user.setPawCount(pawCount);
             userRepository.save(user);
         }
 
@@ -310,7 +311,7 @@ public class UserSubscriptionService {
     cafe의 cafeSubscriptionType info 조회
      */
     public CafeSubscriptionInfoResponseDto getCafeSubscriptionType(CustomUserdetails customUserdetails, CafeSubscriptionTypeInfoRequestDto cafeSubscriptionTypeInfo) {
-        Long id = cafeSubscriptionTypeInfo.id();
+        Long id = cafeSubscriptionTypeInfo.id(); // cafeId 또는 userSubscriptionId
         Boolean isExtension = cafeSubscriptionTypeInfo.isExtension();
 
         if (!isExtension) {
