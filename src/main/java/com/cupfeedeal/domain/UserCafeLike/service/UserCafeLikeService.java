@@ -3,6 +3,7 @@ package com.cupfeedeal.domain.UserCafeLike.service;
 import com.cupfeedeal.domain.User.entity.CustomUserdetails;
 import com.cupfeedeal.domain.User.entity.User;
 import com.cupfeedeal.domain.User.repository.UserRepository;
+import com.cupfeedeal.domain.User.service.CustomUserDetailService;
 import com.cupfeedeal.domain.UserCafeLike.dto.request.UserCafeLikeRequestDto;
 import com.cupfeedeal.domain.UserCafeLike.dto.response.UserCafeLikeResponseDto;
 import com.cupfeedeal.domain.UserCafeLike.entity.UserCafeLike;
@@ -23,10 +24,12 @@ public class UserCafeLikeService {
     private UserRepository userRepository;
     @Autowired
     private CafeRepository cafeRepository;
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
 
     public UserCafeLikeResponseDto addCafeLike(CustomUserdetails customUserdetails, UserCafeLikeRequestDto userCafeLikeRequestDto){
 
-        User user = customUserdetails.getUser();
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
         Long cafeId = userCafeLikeRequestDto.getCafeId();
         Cafe cafe = cafeRepository.findById(cafeId)
@@ -49,7 +52,7 @@ public class UserCafeLikeService {
     }
 
     public String deleteCafeLike(CustomUserdetails customUserdetails, UserCafeLikeRequestDto userCafeLikeRequestDto){
-        User user = customUserdetails.getUser();
+        User user = customUserDetailService.loadUserByCustomUserDetails(customUserdetails);
 
         Long cafeId = userCafeLikeRequestDto.getCafeId();
         Cafe cafe = cafeRepository.findById(cafeId)
