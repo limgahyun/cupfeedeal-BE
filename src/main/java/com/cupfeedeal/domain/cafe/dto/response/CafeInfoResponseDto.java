@@ -19,12 +19,14 @@ public record CafeInfoResponseDto (
         String sns_address,
         String description,
         Boolean is_like,
-        Boolean is_subscription
+        Boolean is_subscription,
+        Boolean is_full_subscriptions
 ) {
     public static CafeInfoResponseDto from(Cafe cafe,
                                            List<CafeImageResponseDto> images,
                                            Boolean is_like,
-                                           Boolean is_subscription) {
+                                           Boolean is_subscription,
+                                           Boolean is_full_subscriptions) {
         return new CafeInfoResponseDto(
                 cafe.getId(),
                 cafe.getName(),
@@ -39,7 +41,8 @@ public record CafeInfoResponseDto (
                 cafe.getSnsAddress(),
                 cafe.getDescription(),
                 is_like,
-                is_subscription
+                is_subscription,
+                is_full_subscriptions
         );
     }
 }

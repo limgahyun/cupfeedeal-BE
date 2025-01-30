@@ -109,13 +109,13 @@ public class CafeService {
         // 카페 저장 여부 반환
         Boolean is_like = (user != null) && userCafeLikeRepository.findByUserAndCafe(user, cafe).isPresent();
 
-        // 카페 구독 여부 반환
         List<SubscriptionStatus> statuses = Arrays.asList(SubscriptionStatus.VALID, SubscriptionStatus.NOTYET);
+
+        // 카페 구독 여부 반환
         Boolean is_subscribed = userSubscriptionRepository.findTop1ByUserAndCafeAndStatus(user, cafe, statuses).isPresent();
 
-        // 구독권이 이미 3개인지 여부 반환
-        Optional<UserSubscription> existingUserSubscription = userSubscriptionRepository.findTop1ByUserAndCafeAndStatus(user, cafe, statuses);
-        Boolean is_full_subscriptions = userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && existingUserSubscription.isEmpty();
+        // 연장이 아니고, 구독권이 이미 3개인지 여부 반환
+        Boolean is_full_subscriptions = (user != null) && userSubscriptionRepository.countByUserAndSubscriptionStatusIsValidOrNotYet(user, statuses) == 3 && !is_subscribed;
 
         return CafeInfoResponseDto.from(cafe, cafeImageResponseDtoList, is_like, is_subscribed, is_full_subscriptions);
     }
